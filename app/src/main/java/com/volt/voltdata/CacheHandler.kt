@@ -20,9 +20,7 @@ class CacheHandler {
         fun createCacheFile(activity: FragmentActivity, name: String, text: String) {
             val outputFile = File(activity.cacheDir, name)
             val inputStream = ByteArrayInputStream(text.toByteArray(UTF_8))
-
             val outputStream = FileOutputStream(outputFile)
-
             inputStream.use { input ->
                 outputStream.use { output ->
                     input.copyTo(output)

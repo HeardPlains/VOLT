@@ -160,14 +160,12 @@ class MainActivity : AppCompatActivity() {
                 || NfcAdapter.ACTION_NDEF_DISCOVERED == action ||
                 NfcAdapter.ACTION_TAG_DISCOVERED == action
             ) {
-                val parcelables = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
-
                 val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
                 val ndef = Ndef.get(tag) ?: return
                 if (ndef.isWritable) {
                     when (AppHandler.currentPage) {
                         Pages.AUTHENTICATION -> checkInNFC(ndef)
-                        Pages.AUTHENTICATION -> checkOutNFC(ndef)
+                        //Pages.AUTHENTICATION -> checkOutNFC(ndef)
                         Pages.SETTINGS -> settingsNFC(ndef)
                         else -> "$AppHandler.currentPage operator is invalid operator."
                     }

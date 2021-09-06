@@ -1,0 +1,43 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Foreman Settings">
+
+        <EditTextPreference
+            app:key="foreman_id"
+            app:title="Foreman ID (Type or Scan)"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:key="foreman_name"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="scan_preferences"
+        app:title="Admin Scan Settings">
+
+        <ListPreference
+            app:defaultValue="Show Card Data"
+            app:entries="@array/scan_settings"
+            app:entryValues="@array/scan_settings"
+            app:key="scan_type"
+            app:title="Scan Setting"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:key="card_preferences"
+        app:title="Foreman Card Creation">
+        <EditTextPreference
+            app:key="card_foreman_name"
+            app:title="Foreman Name"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="card_foreman_id"
+            app:title="Foreman ID (Optional)"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

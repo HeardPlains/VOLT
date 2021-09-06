@@ -1,0 +1,2 @@
+rootProject.name = "VOLT"
+include ':app'

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_check_in"
+        android:icon="@drawable/in_door"
+        android:title="Menu" />
+
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@drawable/out_door"
+        android:title="Card Authentication" />
+
+    <item
+        android:id="@+id/settingsFragment"
+        android:icon="@drawable/settings"
+        android:title="Settings" />
+
+</menu>

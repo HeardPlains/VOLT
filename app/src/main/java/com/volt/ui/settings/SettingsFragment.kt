@@ -8,10 +8,14 @@ import com.volt.MainActivity
 import com.volt.MainActivity.FragmentRefreshListener
 import com.volt.R
 import com.volt.voltdata.ApiHandler
+import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ForemanData
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.CurrentForeman
 import com.volt.voltdata.appdata.Pages
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -20,9 +24,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private var showCard = false
     private val apiHandler = ApiHandler()
 
+    @ExperimentalSerializationApi
+    private fun testing(
+        foremanData:
+        List<ForemanData>
+    ) {
+        CacheHandler.deleteAll(requireActivity())
+        CacheHandler.createCacheFile(requireActivity(), "foreman.txt", Json.encodeToString(foremanData))
+        CacheHandler.printAllCache(requireActivity())
+        CacheHandler.deleteAll(requireActivity())
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+
+        apiHandler.getForemanData(::testing)
+
 
         AppHandler.currentPage = Pages.SETTINGS
 

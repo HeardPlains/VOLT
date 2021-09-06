@@ -32,9 +32,6 @@ class AssignCardFragment : Fragment() {
         get() = _binding!!
     private val apiHandler = ApiHandler()
 
-    val taskValues = arrayListOf<String>()
-    val employeeValues = arrayListOf<String>()
-
 
     @RequiresApi(M)
     override fun onCreateView(

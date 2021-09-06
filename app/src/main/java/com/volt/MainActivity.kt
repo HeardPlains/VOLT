@@ -28,13 +28,14 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 
 
 //const val BASE_URL = "http://10.0.0.119:80/"
-const val BASE_URL = "http://67.164.191.134:80/"
+const val BASE_URL = "http://73.243.134.128:80/"
 
 
 class MainActivity : AppCompatActivity() {
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     // Pending intent for NFC intent foreground dispatch.
     // Used to read all NDEF tags while the app is running in the foreground.
     private var nfcPendingIntent: PendingIntent? = null
+
 
 
     fun setCardName(str: String) {
@@ -83,10 +85,6 @@ class MainActivity : AppCompatActivity() {
 
     fun setTask(str: String) {
         task = str
-    }
-
-    fun setLocation(str: String) {
-        location = str
     }
 
 

@@ -40,9 +40,9 @@ class AssignCardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+
         var cm =
             requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
         Log.i("TK", cm.activeNetwork.toString())
 
 
@@ -73,7 +73,7 @@ class AssignCardFragment : Fragment() {
                 val selectedItem =
                     parent.getItemAtPosition(position).toString()
                 Log.i("TK Spinner", selectedItem)
-                (activity as MainActivity?)?.setEmpId(selectedItem)
+                AppHandler.currentCardAssign.empId = selectedItem
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -89,7 +89,7 @@ class AssignCardFragment : Fragment() {
                 val selectedItem =
                     parent.getItemAtPosition(position).toString()
                 Log.i("TK Spinner", selectedItem)
-                (activity as MainActivity?)?.setTask(selectedItem)
+                AppHandler.currentCardAssign.task = selectedItem
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}

@@ -17,18 +17,16 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.volt.voltdata.apidata.ActiveTimeSheetData
-import com.volt.voltdata.apidata.FinalTimeSheetJson
+import com.volt.voltdata.apidata.FinalTimeSheetData
 import com.volt.databinding.ActivityMainBinding
 import com.volt.voltdata.VOLTApi
 import com.volt.voltdata.appdata.AppHandler
-import com.volt.voltdata.appdata.CurrentForeman
 import com.volt.voltdata.appdata.Pages
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
@@ -164,9 +162,9 @@ class MainActivity : AppCompatActivity() {
                 val ndef = Ndef.get(tag) ?: return
                 if (ndef.isWritable) {
                     when (AppHandler.currentPage) {
-                        Pages.AUTHENTICATION -> checkInNFC(ndef)
-                        //Pages.AUTHENTICATION -> checkOutNFC(ndef)
+                        Pages.AUTHENTICATION -> authenticationNFC(ndef)
                         Pages.SETTINGS -> settingsNFC(ndef)
+                        Pages.ASSIGN_CARD -> assignCard(ndef)
                         else -> "$AppHandler.currentPage operator is invalid operator."
                     }
                 }
@@ -181,12 +179,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun checkInNFC(ndef: Ndef) {
+    private fun authenticationNFC(ndef: Ndef) {
+        if (admin) {
+
+            if (AppHandler.authenticationToggle) {
+                checkInNFC(ndef)
+            } else {
+                checkOutNFC(ndef)
+            }
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun assignCard(ndef: Ndef){
         if (admin) {
             val message = NdefMessage(
                 arrayOf(
-                    NdefRecord.createTextRecord("en", empID),
-                    NdefRecord.createTextRecord("en", task),
+                    NdefRecord.createTextRecord("en", AppHandler.currentCardAssign.empId),
+                    NdefRecord.createTextRecord("en", AppHandler.currentCardAssign.task),
                     NdefRecord.createTextRecord(
                         "en",
                         LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
@@ -198,11 +207,28 @@ class MainActivity : AppCompatActivity() {
             ndef.close()
             Toast.makeText(
                 applicationContext,
-                "$empID Signed In",
+                "Card Assigned to ${AppHandler.currentCardAssign.empId}",
                 Toast.LENGTH_SHORT
             )
                 .show()
-            val name = empID.split(" ")
+        } else {
+            Toast.makeText(
+                this,
+                "Please Enter Foreman ID in Settings Before Scanning a Card",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkInNFC(ndef: Ndef) {
+        if (admin) {
+            val records = ndef.cachedNdefMessage.records
+            for (record in records) {
+                Log.i("TK Record", String(record.payload))
+            }
+            val name = records[0].toString().split(" ")
             val firstName = name[0]
             val lastName = name[1]
             val locationCode = location
@@ -220,6 +246,12 @@ class MainActivity : AppCompatActivity() {
 
             Log.i("TK Click", timeSheet.toString())
             postNewEmployee(timeSheet)
+            Toast.makeText(
+                applicationContext,
+                "$empID Signed In",
+                Toast.LENGTH_SHORT
+            )
+                .show()
         } else {
             Toast.makeText(
                 this,
@@ -245,7 +277,7 @@ class MainActivity : AppCompatActivity() {
             val name = String(records[0].payload).substring(3).split(" ")
             val firstName = name[0]
             val lastName = name[1]
-            val timeSheet = FinalTimeSheetJson(firstName, lastName)
+            val timeSheet = FinalTimeSheetData(firstName, lastName)
             Log.i("TK Click", timeSheet.toString())
             postFinalTimeSheet(timeSheet)
         } else {
@@ -378,23 +410,23 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun postFinalTimeSheet(time_sheet: FinalTimeSheetJson) {
+    private fun postFinalTimeSheet(time_sheet: FinalTimeSheetData) {
         val api = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(VOLTApi::class.java)
 
-        val call: Call<FinalTimeSheetJson> = api.postFinalSheet(time_sheet)
+        val call: Call<FinalTimeSheetData> = api.postFinalSheet(time_sheet)
 
-        call.enqueue(object : Callback<FinalTimeSheetJson> {
+        call.enqueue(object : Callback<FinalTimeSheetData> {
             override fun onResponse(
-                call: Call<FinalTimeSheetJson>,
-                response: Response<FinalTimeSheetJson>
+                call: Call<FinalTimeSheetData>,
+                response: Response<FinalTimeSheetData>
             ) {
             }
 
-            override fun onFailure(call: Call<FinalTimeSheetJson>, t: Throwable) {
+            override fun onFailure(call: Call<FinalTimeSheetData>, t: Throwable) {
                 Log.i("TK Error", "${t.message}")
             }
         })

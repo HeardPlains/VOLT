@@ -1,5 +1,8 @@
 package com.volt.voltdata.apidata
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class EmployeeData(
     val emp_id: Int,
     val first_name: String,

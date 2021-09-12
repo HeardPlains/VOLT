@@ -7,15 +7,18 @@ import retrofit2.http.*
 
 interface VOLTApi {
     @GET("api/active/time_sheet")
-    fun getTimeSheet(): Call<List<ActiveTimeSheetData>>
+    fun getActiveTimeSheet(): Call<List<ActiveTimeSheetData>>
 
     @POST("api/active")
     //@FormUrlEncoded
     fun postTimeSheet(@Body timeSheet: ActiveTimeSheetData): Call<ActiveTimeSheetData>
 
+    @GET("api/final")
+    fun getFinalTimeSheet(): Call<List<FinalTimeSheetData>>
+
     @POST("api/final")
     //@FormUrlEncoded
-    fun postFinalSheet(@Body timeSheet: FinalTimeSheetJson): Call<FinalTimeSheetJson>
+    fun postFinalSheet(@Body timeSheet: FinalTimeSheetData): Call<FinalTimeSheetData>
 
     @GET("api/employee_data")
     fun getEmployees(): Call<List<EmployeeData>>

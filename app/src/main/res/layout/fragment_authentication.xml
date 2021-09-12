@@ -146,7 +146,7 @@
 
 
                 <ToggleButton
-                    android:id="@+id/simpleToggleButton"
+                    android:id="@+id/authenticationToggleButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"

@@ -106,17 +106,17 @@ class ApiHandler {
         })
     }
 
-    fun postFinalTimeSheet(time_sheet: FinalTimeSheetJson) {
+    fun postFinalTimeSheet(time_sheet: FinalTimeSheetData) {
 
-        val call: Call<FinalTimeSheetJson> = api.postFinalSheet(time_sheet)
-        call.enqueue(object : Callback<FinalTimeSheetJson> {
+        val call: Call<FinalTimeSheetData> = api.postFinalSheet(time_sheet)
+        call.enqueue(object : Callback<FinalTimeSheetData> {
             override fun onResponse(
-                call: Call<FinalTimeSheetJson>,
-                response: Response<FinalTimeSheetJson>
+                call: Call<FinalTimeSheetData>,
+                response: Response<FinalTimeSheetData>
             ) {
             }
 
-            override fun onFailure(call: Call<FinalTimeSheetJson>, t: Throwable) {
+            override fun onFailure(call: Call<FinalTimeSheetData>, t: Throwable) {
             }
 
         })
@@ -174,7 +174,7 @@ class ApiHandler {
         activity: FragmentActivity,
         tableLayout: TableLayout
     ) {
-        val activeCall: Call<List<ActiveTimeSheetData>> = api.getTimeSheet()
+        val activeCall: Call<List<ActiveTimeSheetData>> = api.getActiveTimeSheet()
         activeCall.enqueue(object : Callback<List<ActiveTimeSheetData>> {
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onResponse(
@@ -196,12 +196,7 @@ class ApiHandler {
 
     fun getForemanData(
         func: (foremanData: List<ForemanData>) -> Unit
-    ) {
-        val api = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(VOLTApi::class.java)
+    )  {
         val employeeCall: Call<List<ForemanData>> = api.getForeman()
         employeeCall.enqueue(object : Callback<List<ForemanData>> {
             override fun onResponse(
@@ -209,13 +204,109 @@ class ApiHandler {
                 response: Response<List<ForemanData>>
             ) {
                 val rs: List<ForemanData> = response.body()!!
-                for (sheet in rs) {
-                    Log.i("TK Foreman", sheet.toString())
-                }
                 func(rs)
             }
 
             override fun onFailure(call: Call<List<ForemanData>>, t: Throwable) {
+                Log.i("TK Error", "${t.message}")
+            }
+        })
+    }
+
+    fun getEmployeeData(
+        func: (foremanData: List<EmployeeData>) -> Unit
+    ) {
+        val employeeCall: Call<List<EmployeeData>> = api.getEmployees()
+        employeeCall.enqueue(object : Callback<List<EmployeeData>> {
+            override fun onResponse(
+                call: Call<List<EmployeeData>>,
+                response: Response<List<EmployeeData>>
+            ) {
+                val rs: List<EmployeeData> = response.body()!!
+
+                func(rs)
+            }
+
+            override fun onFailure(call: Call<List<EmployeeData>>, t: Throwable) {
+                Log.i("TK Error", "${t.message}")
+            }
+        })
+    }
+
+    fun getActiveTimeSheetData(
+        func: (foremanData: List<ActiveTimeSheetData>) -> Unit
+    ) {
+        val employeeCall: Call<List<ActiveTimeSheetData>> = api.getActiveTimeSheet()
+        employeeCall.enqueue(object : Callback<List<ActiveTimeSheetData>> {
+            override fun onResponse(
+                call: Call<List<ActiveTimeSheetData>>,
+                response: Response<List<ActiveTimeSheetData>>
+            ) {
+                val rs: List<ActiveTimeSheetData> = response.body()!!
+
+                func(rs)
+            }
+
+            override fun onFailure(call: Call<List<ActiveTimeSheetData>>, t: Throwable) {
+                Log.i("TK Error", "${t.message}")
+            }
+        })
+    }
+
+    fun getLocationData(
+        func: (foremanData: List<LocationData>) -> Unit
+    ) {
+        val employeeCall: Call<List<LocationData>> = api.getLocations()
+        employeeCall.enqueue(object : Callback<List<LocationData>> {
+            override fun onResponse(
+                call: Call<List<LocationData>>,
+                response: Response<List<LocationData>>
+            ) {
+                val rs: List<LocationData> = response.body()!!
+
+                func(rs)
+            }
+
+            override fun onFailure(call: Call<List<LocationData>>, t: Throwable) {
+                Log.i("TK Error", "${t.message}")
+            }
+        })
+    }
+    fun getTaskData(
+        func: (foremanData: List<TaskData>) -> Unit
+    ) {
+        val employeeCall: Call<List<TaskData>> = api.getTasks()
+        employeeCall.enqueue(object : Callback<List<TaskData>> {
+            override fun onResponse(
+                call: Call<List<TaskData>>,
+                response: Response<List<TaskData>>
+            ) {
+                val rs: List<TaskData> = response.body()!!
+
+                func(rs)
+            }
+
+            override fun onFailure(call: Call<List<TaskData>>, t: Throwable) {
+                Log.i("TK Error", "${t.message}")
+            }
+        })
+    }
+
+    fun getFinalTimeSheetData(
+        func: (foremanData: List<FinalTimeSheetData>) -> Unit
+    ) {
+        val employeeCall: Call<List<FinalTimeSheetData>> = api.getFinalTimeSheet()
+        employeeCall.enqueue(object : Callback<List<FinalTimeSheetData>> {
+            override fun onResponse(
+                call: Call<List<FinalTimeSheetData>>,
+                response: Response<List<FinalTimeSheetData>>
+            ) {
+                val rs: List<FinalTimeSheetData> = response.body()!!
+
+                func(rs)
+            }
+
+            override fun onFailure(call: Call<List<FinalTimeSheetData>>, t: Throwable) {
                 Log.i("TK Error", "${t.message}")
             }
         })

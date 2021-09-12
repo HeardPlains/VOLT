@@ -1,7 +1,9 @@
 package com.volt.voltdata.apidata
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ActiveTimeSheetData(
     @SerializedName("id")
     val id: Int,

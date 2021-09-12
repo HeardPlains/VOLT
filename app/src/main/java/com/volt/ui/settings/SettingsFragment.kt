@@ -1,8 +1,11 @@
 package com.volt.ui.settings
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.preference.*
 import com.volt.MainActivity
 import com.volt.MainActivity.FragmentRefreshListener
@@ -14,8 +17,6 @@ import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.CurrentForeman
 import com.volt.voltdata.appdata.Pages
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -24,21 +25,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private var showCard = false
     private val apiHandler = ApiHandler()
 
+    @RequiresApi(Build.VERSION_CODES.M)
     @ExperimentalSerializationApi
-    private fun testing(
-        foremanData:
-        List<ForemanData>
-    ) {
-        CacheHandler.deleteAll(requireActivity())
-        CacheHandler.createCacheFile(requireActivity(), "foreman.txt", Json.encodeToString(foremanData))
-        CacheHandler.printAllCache(requireActivity())
-        CacheHandler.deleteAll(requireActivity())
-    }
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        apiHandler.getForemanData(::testing)
+        //CacheHandler.deleteAll(requireActivity())
+       // CacheHandler.refreshCacheData(requireActivity())
+        CacheHandler.printAllCache(requireActivity())
+        //CacheHandler.deleteAll(requireActivity())
 
 
         AppHandler.currentPage = Pages.SETTINGS
@@ -107,6 +102,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         })
 
 
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        CacheHandler.printForemanCache(requireActivity())
     }
 
     private fun updateList() {
@@ -183,10 +185,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         foremanData:
         List<ForemanData>
     ) {
-        Log.i("TK", "Passed!")
-        for (sheet in foremanData) {
-            Log.i("TK Foreman Passed", sheet.toString())
-        }
         val foremanName: EditTextPreference? = findPreference("foreman_name")
         try {
             for (sheet in foremanData) {

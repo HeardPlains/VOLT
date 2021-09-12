@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment
 import com.volt.voltdata.ApiHandler
 import com.volt.MainActivity
 import com.volt.R
-import com.volt.voltdata.apidata.FinalTimeSheetJson
+import com.volt.voltdata.apidata.FinalTimeSheetData
 import com.volt.databinding.FragmentAuthenticationBinding
 import com.volt.ui.check_in.pages.AssignCardFragment
 import com.volt.voltdata.appdata.AppHandler
@@ -70,6 +70,10 @@ class AuthenticationFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
+        binding.authenticationToggleButton.setOnClickListener(){
+           AppHandler.authenticationToggle = binding.authenticationToggleButton.isActivated
+        }
+
      //   binding.manualPane.isVisible = false
 
 
@@ -89,7 +93,7 @@ class AuthenticationFragment : Fragment() {
                 val name =
                     (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString()
                         .split(" ")
-                val timeSheet = FinalTimeSheetJson(name[0], name[1])
+                val timeSheet = FinalTimeSheetData(name[0], name[1])
                 Log.i("TK Click", timeSheet.toString())
                 Toast.makeText(
                     requireActivity(),

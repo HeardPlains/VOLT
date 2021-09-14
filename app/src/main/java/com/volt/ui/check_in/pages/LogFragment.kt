@@ -2,7 +2,10 @@ package com.volt.ui.check_in.pages
 
 
 import android.content.Context
+import android.graphics.Color
+import android.media.MediaExtractor
 import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Build.VERSION_CODES.M
 import android.os.Bundle
 import android.util.Log
@@ -15,9 +18,16 @@ import android.widget.TableLayout
 import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
+import com.google.android.material.tabs.TabLayout
 import com.volt.R
 import com.volt.databinding.FragmentLogBinding
 import com.volt.voltdata.ApiHandler
+import com.volt.voltdata.CacheHandler
+import com.volt.voltdata.apidata.ActiveTimeSheetData
+import com.volt.voltdata.appdata.AppHandler
+import kotlinx.serialization.ExperimentalSerializationApi
 
 
 class LogFragment : Fragment() {
@@ -32,105 +42,151 @@ class LogFragment : Fragment() {
         get() = _binding!!
     private val apiHandler = ApiHandler()
 
-    val taskValues = arrayListOf<String>()
-    val employeeValues = arrayListOf<String>()
-
+    @RequiresApi(M)
+    override fun onStart() {
+        super.onStart()
+        AppHandler.pageUpdate(requireActivity())
+        if (AppHandler.connection) {
+            CacheHandler.refreshCacheData(requireActivity())
+        }
+    }
 
     @RequiresApi(M)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-
-        val cm =
-            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val connection = (cm.activeNetwork?.toString() != null)
-        Log.i("TK", cm.activeNetwork.toString())
-
 
 
         _binding = FragmentLogBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.offlineLogConstraint.isVisible = connection
-        binding.button2.isEnabled = connection
+        binding.dataPushButton.isEnabled = AppHandler.connection
+        if (AppHandler.connection || AppHandler.offlineSignIns.isNotEmpty()) {
+            binding.dataPushButton.text = "PUSH TABLE"
+        } else {
+            binding.dataPushButton.text = "OFFLINE..."
+        }
 
+        binding.dataPushButton.setOnClickListener() {
+            val entries = CacheHandler.getOfflineSignInCacheList(requireActivity()).size
+            for (list in CacheHandler.getOfflineSignInCacheList(requireActivity())) {
+                apiHandler.postActiveTimeSheet(list)
+            }
+            AppHandler.offlineSignIns.clear()
+            binding.offlineTableSignIn.removeAllViews()
+            CacheHandler.deleteOfflineLogs(requireActivity())
+            Toast.makeText(requireActivity(), "Sent $entries to the Database!", Toast.LENGTH_LONG)
+                .show()
+            refreshPage()
+        }
 
-//        binding.taskSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(
-//                parent: AdapterView<*>,
-//                view: View?,
-//                position: Int,
-//                id: Long
-//            ) {
-//                val selectedItem =
-//                    parent.getItemAtPosition(position).toString()
-//                Log.i("TK Spinner", selectedItem)
-//                (activity as MainActivity?)?.setTask(selectedItem)
+        var presses = 0
+        binding.clearLogsButton.setOnClickListener() {
+            presses++
+            binding.clearLogsButton.setBackgroundColor(Color.RED)
+            binding.clearLogsButton.setTextColor(Color.BLACK)
+            if (presses > 1) {
+                AppHandler.offlineSignIns.clear()
+                binding.offlineTableSignIn.removeAllViews()
+                CacheHandler.deleteOfflineLogs(requireActivity())
+                Toast.makeText(requireActivity(), "Logs Cleared!", Toast.LENGTH_LONG).show()
+                refreshPage()
+            }
+        }
+
+//        binding.scrollView.setOnScrollChangeListener { view, i, i2, i3, i4 ->
+//            Log.i("TK", "$view is Moving $i $i2 $i3 $i4")
+//            if (i4 > i2 + 20) {
+//                refreshPage()
 //            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>?) {}
 //        }
+//
+
+
 
 
         return root
     }
 
 
+    @RequiresApi(M)
+    private fun refreshPage() {
+        Thread.sleep(1000)
+        val fragmentManager = parentFragmentManager
+        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(
+            R.id.nav_host_fragment_activity_main,
+            LogFragment().newInstance()
+        )
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
+    }
+
     fun newInstance(): LogFragment {
         return LogFragment()
     }
 
+    @ExperimentalSerializationApi
     @RequiresApi(M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        apiHandler.renderEmployeesInTable(
-            requireActivity(),
-            requireView().findViewById(R.id.allTable) as TableLayout
-        )
-//        val ll = requireView().findViewById(R.id.allTable) as TableLayout
-//
-//        for (i in 1..1) {
-//            val row = TableRow(requireActivity())
-//            val tl: TableRow.LayoutParams = TableRow.LayoutParams(
-//                TableRow.LayoutParams.MATCH_PARENT,
-//                TableRow.LayoutParams.WRAP_CONTENT,
-//                .25f
-//            )
-//            row.layoutParams = tl
-//            val tr: TableRow.LayoutParams = TableRow.LayoutParams(
-//                0,
-//                TableRow.LayoutParams.WRAP_CONTENT,
-//                .25f
-//            )
-//            val name = TextView(requireActivity())
-//            val time = TextView(requireActivity())
-//            val location = TextView(requireActivity())
-//            val task = TextView(requireActivity())
-//            name.text = "Ty Ordway"
-//            time.text = "10:10:00"
-//            location.text = "17C"
-//            task.text = "RU"
-//            name.textAlignment = TEXT_ALIGNMENT_CENTER
-//            time.textAlignment = TEXT_ALIGNMENT_CENTER
-//            location.textAlignment = TEXT_ALIGNMENT_CENTER
-//            task.textAlignment = TEXT_ALIGNMENT_CENTER
-//            name.setTextAppearance(R.style.tableRowTextView)
-//            time.setTextAppearance(R.style.tableRowTextView)
-//            location.setTextAppearance(R.style.tableRowTextView)
-//            task.setTextAppearance(R.style.tableRowTextView)
-//            name.layoutParams = tr
-//            time.layoutParams = tr
-//            location.layoutParams = tr
-//            task.layoutParams = tr
-//            row.addView(name)
-//            row.addView(time)
-//            row.addView(location)
-//            row.addView(task)
-//            ll.addView(row, i)
-//        }
+
+
+        createTable(requireView().findViewById(R.id.allTable) as TableLayout,
+            CacheHandler.getActiveSheetCacheList(requireActivity()))
+        createTable(requireView().findViewById(R.id.offlineTableSignIn) as TableLayout,
+            CacheHandler.getOfflineSignInCacheList(requireActivity()))
+    }
+
+    @RequiresApi(M)
+    fun createTable(
+        tableLayout: TableLayout,
+        time_sheet: List<ActiveTimeSheetData>,
+    ) {
+        for ((count, sheet) in time_sheet.withIndex()) {
+            Log.i("TK Table", "Creating a table row: $sheet")
+            val row = TableRow(activity)
+            val tl: TableRow.LayoutParams = TableRow.LayoutParams(
+                TableRow.LayoutParams.MATCH_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT,
+                .25f
+            )
+            row.layoutParams = tl
+            val tr: TableRow.LayoutParams = TableRow.LayoutParams(
+                0,
+                TableRow.LayoutParams.WRAP_CONTENT,
+                .25f
+            )
+            val name = TextView(activity)
+            val time = TextView(activity)
+            val location = TextView(activity)
+            val task = TextView(activity)
+            val fullName = sheet.first_name + " " + sheet.last_name
+            name.text = fullName
+            time.text = sheet.time_in
+            location.text = sheet.location_code
+            task.text = sheet.task_code
+            name.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            time.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            location.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            task.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            name.setTextAppearance(com.volt.R.style.tableRowTextView)
+            time.setTextAppearance(com.volt.R.style.tableRowTextView)
+            location.setTextAppearance(com.volt.R.style.tableRowTextView)
+            task.setTextAppearance(com.volt.R.style.tableRowTextView)
+            name.layoutParams = tr
+            time.layoutParams = tr
+            location.layoutParams = tr
+            task.layoutParams = tr
+            row.addView(name)
+            row.addView(time)
+            row.addView(location)
+            row.addView(task)
+            tableLayout.addView(row, count + 1)
+        }
     }
 
 

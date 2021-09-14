@@ -12,7 +12,6 @@ import com.volt.MainActivity.FragmentRefreshListener
 import com.volt.R
 import com.volt.voltdata.ApiHandler
 import com.volt.voltdata.CacheHandler
-import com.volt.voltdata.apidata.ForemanData
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.CurrentForeman
 import com.volt.voltdata.appdata.Pages
@@ -21,31 +20,31 @@ import kotlinx.serialization.ExperimentalSerializationApi
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
-    private var isAdmin = false
+
     private var showCard = false
-    private val apiHandler = ApiHandler()
+
+
 
     @RequiresApi(Build.VERSION_CODES.M)
     @ExperimentalSerializationApi
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        //CacheHandler.deleteAll(requireActivity())
-       // CacheHandler.refreshCacheData(requireActivity())
+
+        setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        AppHandler.pageUpdate(requireActivity())
         CacheHandler.printAllCache(requireActivity())
-        //CacheHandler.deleteAll(requireActivity())
+
 
 
         AppHandler.currentPage = Pages.SETTINGS
-
-        adminCheck()
+        val foremanPreference: EditTextPreference? = findPreference("foreman_id")
+        adminCheck(foremanPreference!!.text.toString())
         emptyCells()
 
         updateList()
-        val foremanPreference: EditTextPreference? = findPreference("foreman_id")
         foremanPreference?.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener { _, _ ->
-                adminCheck()
+            Preference.OnPreferenceChangeListener { _, value ->
+                adminCheck(value as String)
                 true
             }
         val scanTypePreference: ListPreference? = findPreference("scan_type")
@@ -108,7 +107,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        CacheHandler.printForemanCache(requireActivity())
     }
 
     private fun updateList() {
@@ -144,11 +142,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         foremanCardID?.text = ""
     }
 
+    @ExperimentalSerializationApi
     fun updateForemanID(string: String) {
         Log.i("TK Foreman Create", string)
         val foremanPreference: EditTextPreference? = findPreference("foreman_id")
         foremanPreference?.text = string
-        adminCheck()
+        adminCheck(foremanPreference!!.text.toString())
         setVisibility()
 
     }
@@ -169,29 +168,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun setVisibility() {
         val scanPreference: PreferenceCategory? = findPreference("scan_preferences")
         val cardPreferences: PreferenceCategory? = findPreference("card_preferences")
-        scanPreference?.isVisible = isAdmin
+        scanPreference?.isVisible = AppHandler.admin
         Log.i("TK Bool", showCard.toString())
         cardPreferences?.isVisible = showCard
 
     }
 
-
-    private fun adminCheck() {
-        apiHandler.getForemanData(::adminCheckHandler)
-    }
-
-
-    private fun adminCheckHandler(
-        foremanData:
-        List<ForemanData>
-    ) {
+    @ExperimentalSerializationApi
+    private fun adminCheck(value: String) {
         val foremanName: EditTextPreference? = findPreference("foreman_name")
         try {
-            for (sheet in foremanData) {
-                val foremanPreference: EditTextPreference? = findPreference("foreman_id")
-                val foremanID = foremanPreference?.text.toString().toInt()
+            for (sheet in CacheHandler.getForemanCacheList(requireActivity())) {
                 Log.i("TK Foreman ID", sheet.foreman_id.toString())
-                if (sheet.foreman_id == foremanID) {
+                Log.i("TK Foreman ID2", value)
+                if (sheet.foreman_id == value.toInt()) {
+                    Log.i("TK Testing", "Should Print Now!")
                     AppHandler.currentForeman = CurrentForeman(
                         sheet.first_name,
                         sheet.last_name,
@@ -199,25 +190,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         sheet.current_location
                     )
                     foremanName?.text = AppHandler.currentForeman.fullName
-                    isAdmin = true
-                    (activity as MainActivity?)?.setAdmin(isAdmin)
+                    AppHandler.admin = true
                     (activity as MainActivity?)?.setSettingValue(1)
                     setVisibility()
                     return
+                } else {
+                    foremanName?.text = "";
+                    AppHandler.admin = false
+                    (activity as MainActivity?)?.setSettingValue(0)
+                    showCard = false
+                    setVisibility()
+                    Toast.makeText(requireActivity(), "Foreman ID Invalid!", Toast.LENGTH_LONG)
+                        .show()
                 }
-                foremanName?.text = "";
-                isAdmin = false
-                (activity as MainActivity?)?.setAdmin(isAdmin)
-                (activity as MainActivity?)?.setSettingValue(0)
-                showCard = false
-                setVisibility()
-                Toast.makeText(requireActivity(), "Foreman ID Invalid!", Toast.LENGTH_LONG)
-                    .show()
             }
         } catch (ex: NumberFormatException) {
-            isAdmin = false
+            AppHandler.admin = false
             foremanName?.text = "";
-            (activity as MainActivity?)?.setAdmin(isAdmin)
             (activity as MainActivity?)?.setSettingValue(0)
             showCard = false;
             setVisibility()

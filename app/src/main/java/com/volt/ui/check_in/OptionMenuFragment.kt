@@ -1,15 +1,19 @@
 package com.volt.ui.check_in
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.volt.R
 import com.volt.databinding.FragmentOptionMenuBinding
 import com.volt.ui.check_in.pages.AssignCardFragment
 import com.volt.ui.check_in.pages.LogFragment
+import com.volt.voltdata.CacheHandler
+import com.volt.voltdata.appdata.AppHandler
 
 
 class OptionMenuFragment : Fragment() {
@@ -20,6 +24,15 @@ class OptionMenuFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onStart() {
+        super.onStart()
+        AppHandler.pageUpdate(requireActivity())
+        if (AppHandler.connection){
+            CacheHandler.refreshCacheData(requireActivity())
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

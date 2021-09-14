@@ -122,77 +122,7 @@ class ApiHandler {
         })
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    fun createTable(
-        activity: FragmentActivity,
-        tableLayout: TableLayout,
-        time_sheet: ActiveTimeSheetData
-    ) {
-        for (i in 1..1) {
-            val row = TableRow(activity)
-            val tl: TableRow.LayoutParams = TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT,
-                TableRow.LayoutParams.WRAP_CONTENT,
-                .25f
-            )
-            row.layoutParams = tl
-            val tr: TableRow.LayoutParams = TableRow.LayoutParams(
-                0,
-                TableRow.LayoutParams.WRAP_CONTENT,
-                .25f
-            )
-            val name = TextView(activity)
-            val time = TextView(activity)
-            val location = TextView(activity)
-            val task = TextView(activity)
-            val fullName = time_sheet.first_name + " " + time_sheet.last_name
-            name.text = fullName
-            time.text = time_sheet.time_in
-            location.text = time_sheet.location_code
-            task.text = time_sheet.task_code
-            name.textAlignment = View.TEXT_ALIGNMENT_CENTER
-            time.textAlignment = View.TEXT_ALIGNMENT_CENTER
-            location.textAlignment = View.TEXT_ALIGNMENT_CENTER
-            task.textAlignment = View.TEXT_ALIGNMENT_CENTER
-            name.setTextAppearance(com.volt.R.style.tableRowTextView)
-            time.setTextAppearance(com.volt.R.style.tableRowTextView)
-            location.setTextAppearance(com.volt.R.style.tableRowTextView)
-            task.setTextAppearance(com.volt.R.style.tableRowTextView)
-            name.layoutParams = tr
-            time.layoutParams = tr
-            location.layoutParams = tr
-            task.layoutParams = tr
-            row.addView(name)
-            row.addView(time)
-            row.addView(location)
-            row.addView(task)
-            tableLayout.addView(row, i)
-        }
-    }
 
-    fun renderEmployeesInTable(
-        activity: FragmentActivity,
-        tableLayout: TableLayout
-    ) {
-        val activeCall: Call<List<ActiveTimeSheetData>> = api.getActiveTimeSheet()
-        activeCall.enqueue(object : Callback<List<ActiveTimeSheetData>> {
-            @RequiresApi(Build.VERSION_CODES.M)
-            override fun onResponse(
-                call: Call<List<ActiveTimeSheetData>>,
-                response: Response<List<ActiveTimeSheetData>>
-            ) {
-                val rs: List<ActiveTimeSheetData> = response.body()!!
-                for (sheet in rs) {
-                    createTable(activity, tableLayout, sheet)
-                }
-            }
-
-            override fun onFailure(call: Call<List<ActiveTimeSheetData>>, t: Throwable) {
-                Log.i("TK Error", "${t.message}")
-            }
-
-        })
-    }
 
     fun getForemanData(
         func: (foremanData: List<ForemanData>) -> Unit

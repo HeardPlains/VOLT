@@ -19,9 +19,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.volt.voltdata.apidata.ActiveTimeSheetData
 import com.volt.voltdata.apidata.FinalTimeSheetData
 import com.volt.databinding.ActivityMainBinding
+import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.VOLTApi
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.Pages
+import kotlinx.serialization.ExperimentalSerializationApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,6 +38,7 @@ import kotlin.random.Random
 const val BASE_URL = "http://73.243.134.128:80/"
 
 
+@ExperimentalSerializationApi
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -43,7 +46,6 @@ class MainActivity : AppCompatActivity() {
     private var empID = ""
     private var task = ""
     private var location = ""
-    private var admin = false
     private var settingValue = 0
     private var cardName = ""
     private var cardID = ""
@@ -65,17 +67,12 @@ class MainActivity : AppCompatActivity() {
         cardID = str
     }
 
-    fun getAdmin(): Boolean {
-        return admin
-    }
+
 
     fun setSettingValue(num: Int) {
         settingValue = num
     }
 
-    fun setAdmin(admin: Boolean) {
-        this.admin = admin
-    }
 
     fun setEmpId(str: String) {
         empID = str
@@ -85,10 +82,25 @@ class MainActivity : AppCompatActivity() {
         task = str
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onStart() {
+        super.onStart()
+        AppHandler.pageUpdate(this)
+        if(AppHandler.connection){
+            CacheHandler.refreshCacheData(this)
+        }
+    }
 
 
+
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //CacheHandler.deleteAll(requireActivity())
+        //CacheHandler.refreshCacheData(this)
+
+        //CacheHandler.deleteAll(requireActivity())
 
 
 
@@ -123,6 +135,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         initNfcAdapter()
+
 
 
     }
@@ -180,8 +193,7 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun authenticationNFC(ndef: Ndef) {
-        if (admin) {
-
+        if (AppHandler.admin) {
             if (AppHandler.authenticationToggle) {
                 checkInNFC(ndef)
             } else {
@@ -191,7 +203,7 @@ class MainActivity : AppCompatActivity() {
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun assignCard(ndef: Ndef){
-        if (admin) {
+        if (AppHandler.admin) {
             val message = NdefMessage(
                 arrayOf(
                     NdefRecord.createTextRecord("en", AppHandler.currentCardAssign.empId),
@@ -223,7 +235,7 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun checkInNFC(ndef: Ndef) {
-        if (admin) {
+        if (AppHandler.admin) {
             val records = ndef.cachedNdefMessage.records
             for (record in records) {
                 Log.i("TK Record", String(record.payload))
@@ -263,7 +275,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkOutNFC(ndef: Ndef) {
-        if (admin) {
+        if (AppHandler.admin) {
             val records = ndef.cachedNdefMessage.records
             for (record in records) {
                 Log.i("TK Record", String(record.payload))
@@ -291,7 +303,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun settingsNFC(ndef: Ndef) {
-        if (admin) {
+        if (AppHandler.admin) {
             if (settingValue == 1) {
                 val records = ndef.cachedNdefMessage.records
                 var list = ""
@@ -319,7 +331,7 @@ class MainActivity : AppCompatActivity() {
             } else if (settingValue == 3) {
                 val message = NdefMessage(
                     arrayOf(
-                        NdefRecord.createTextRecord("en", "Admin"),
+                        NdefRecord.createTextRecord("en", "AppHandler.admin"),
                         NdefRecord.createTextRecord("en", cardName),
                         NdefRecord.createTextRecord("en", cardID),
                     )
@@ -340,7 +352,7 @@ class MainActivity : AppCompatActivity() {
             for (record in records) {
                 Log.i("TK Record", String(record.payload).substring(3))
             }
-            if (String(records[0].payload).substring(3) == "Admin") {
+            if (String(records[0].payload).substring(3) == "AppHandler.admin") {
                 setCardID(String(records[2].payload).substring(3))
 
                 if (getFragmentRefreshListener() != null) {
@@ -355,7 +367,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     applicationContext,
-                    "Invalid Admin Card",
+                    "Invalid AppHandler.admin Card",
                     Toast.LENGTH_SHORT
                 ).show()
             }

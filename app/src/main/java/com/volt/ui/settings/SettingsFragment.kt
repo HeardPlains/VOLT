@@ -38,7 +38,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         AppHandler.currentPage = Pages.SETTINGS
         val foremanPreference: EditTextPreference? = findPreference("foreman_id")
-        adminCheck(foremanPreference!!.text.toString())
+        adminCheck(foremanPreference?.text.toString())
         emptyCells()
 
         updateList()

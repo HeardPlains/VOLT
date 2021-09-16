@@ -1,15 +1,13 @@
 package com.volt.voltdata.appdata
 
-import android.R
+import android.*
 import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Build
-import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentActivity
-import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.*
 import kotlinx.serialization.ExperimentalSerializationApi
 
@@ -49,7 +47,7 @@ class AppHandler {
                     R.layout.simple_spinner_item,
                     employeeValues
                 )
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
             spinner.adapter = adapter
             adapter.notifyDataSetChanged()
         }
@@ -70,7 +68,7 @@ class AppHandler {
                     R.layout.simple_spinner_item,
                     taskValues
                 )
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
             spinner.adapter = adapter
             adapter.notifyDataSetChanged()
         }
@@ -90,7 +88,7 @@ class AppHandler {
                     R.layout.simple_spinner_item,
                     locationValues
                 )
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
             spinner.adapter = adapter
             adapter.notifyDataSetChanged()
         }

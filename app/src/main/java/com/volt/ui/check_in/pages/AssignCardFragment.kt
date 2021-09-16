@@ -34,14 +34,14 @@ class AssignCardFragment : Fragment() {
         get() = _binding!!
     private val apiHandler = ApiHandler()
 
-    @RequiresApi(M)
-    override fun onStart() {
-        AppHandler.pageUpdate(requireActivity())
-        super.onStart()
-        if (AppHandler.connection){
-            CacheHandler.refreshCacheData(requireActivity())
-        }
-    }
+//    @RequiresApi(M)
+//    override fun onStart() {
+//        AppHandler.pageUpdate(requireActivity())
+//        super.onStart()
+//        if (AppHandler.connection){
+//            CacheHandler.refreshCacheData(requireActivity())
+//        }
+//    }
     @ExperimentalSerializationApi
     @RequiresApi(M)
     override fun onCreateView(

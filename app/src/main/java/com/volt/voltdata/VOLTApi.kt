@@ -13,12 +13,20 @@ interface VOLTApi {
     //@FormUrlEncoded
     fun postTimeSheet(@Body timeSheet: ActiveTimeSheetData): Call<ActiveTimeSheetData>
 
+    @POST("api/active/time")
+    //@FormUrlEncoded
+    fun postTimeSheetWithTime(@Body timeSheet: ActiveTimeSheetData): Call<ActiveTimeSheetData>
+
     @GET("api/final")
     fun getFinalTimeSheet(): Call<List<FinalTimeSheetData>>
 
     @POST("api/final")
     //@FormUrlEncoded
     fun postFinalSheet(@Body timeSheet: FinalTimeSheetData): Call<FinalTimeSheetData>
+
+    @POST("api/final/time")
+    //@FormUrlEncoded
+    fun postFinalSheetWithTime(@Body timeSheet: FinalTimeSheetData): Call<FinalTimeSheetData>
 
     @GET("api/employee_data")
     fun getEmployees(): Call<List<EmployeeData>>

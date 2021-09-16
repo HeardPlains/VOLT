@@ -123,16 +123,6 @@
                             android:text="@string/task"
                             android:textColor="@color/white" />
 
-                        <TextView
-                            android:id="@+id/offlineTableStatusSignIn"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.25"
-                            android:fontFamily="@font/noto_sans"
-                            android:gravity="center"
-                            android:text="Status"
-                            android:textColor="@color/white" />
-
                     </TableRow>
 
                 </TableLayout>
@@ -186,36 +176,6 @@
                             android:fontFamily="@font/noto_sans"
                             android:gravity="center"
                             android:text="@string/time"
-                            android:textColor="@color/white" />
-
-                        <TextView
-                            android:id="@+id/offlineTableLocationSignOut"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.25"
-                            android:fontFamily="@font/noto_sans"
-                            android:gravity="center"
-                            android:text="@string/location"
-                            android:textColor="@color/white" />
-
-                        <TextView
-                            android:id="@+id/offlineTableTaskSignOut"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.25"
-                            android:fontFamily="@font/noto_sans"
-                            android:gravity="center"
-                            android:text="@string/task"
-                            android:textColor="@color/white" />
-
-                        <TextView
-                            android:id="@+id/offlineTableStatusSignOut"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.25"
-                            android:fontFamily="@font/noto_sans"
-                            android:gravity="center"
-                            android:text="Status"
                             android:textColor="@color/white" />
 
                     </TableRow>

@@ -19,6 +19,7 @@ import com.volt.ui.check_in.pages.LogFragment
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ActiveTimeSheetData
 import com.volt.voltdata.appdata.AppHandler
+import kotlinx.serialization.ExperimentalSerializationApi
 
 
 class OptionMenuFragment : Fragment() {
@@ -54,6 +55,7 @@ class OptionMenuFragment : Fragment() {
         return root
     }
 
+
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,8 +68,8 @@ class OptionMenuFragment : Fragment() {
 
 
 
-        binding.empIdCheckInButton.setOnClickListener {
-            val fragmentManager = parentFragmentManager
+        binding.manualEntry.setOnClickListener {
+            val fragmentManager = requireActivity().supportFragmentManager
             val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
             fragmentTransaction.replace(
                 R.id.nav_host_fragment_activity_main,
@@ -78,7 +80,7 @@ class OptionMenuFragment : Fragment() {
         }
 
         binding.logConstraint.setOnClickListener {
-            val fragmentManager = parentFragmentManager
+            val fragmentManager = requireActivity().supportFragmentManager
             val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
             fragmentTransaction.replace(
                 R.id.nav_host_fragment_activity_main,
@@ -90,7 +92,7 @@ class OptionMenuFragment : Fragment() {
 
 
 //        binding.findEmployeeButton.setOnClickListener {
-//            val fragmentManager = parentFragmentManager
+//            val fragmentManager = requireActivity().supportFragmentManager
 //            val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
 //            fragmentTransaction.replace(
 //                R.id.nav_host_fragment_activity_main,

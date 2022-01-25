@@ -99,6 +99,7 @@ class LogFragment : Fragment() {
         }
 
 
+
         var presses = 0
         binding.clearLogsButton.setOnClickListener() {
             presses++
@@ -129,7 +130,7 @@ class LogFragment : Fragment() {
     @RequiresApi(M)
     private fun refreshPage() {
         Thread.sleep(100)
-        val fragmentManager = parentFragmentManager
+        val fragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(
             R.id.nav_host_fragment_activity_main,
@@ -143,7 +144,7 @@ class LogFragment : Fragment() {
         return LogFragment()
     }
 
-    @ExperimentalSerializationApi
+
     @RequiresApi(M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

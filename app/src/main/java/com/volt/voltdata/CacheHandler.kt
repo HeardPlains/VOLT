@@ -1,5 +1,6 @@
 package com.volt.voltdata
 
+import android.app.Activity
 import android.nfc.tech.Ndef
 import android.os.Build
 import android.util.Log
@@ -219,7 +220,7 @@ class CacheHandler() {
         }
 
         @ExperimentalSerializationApi
-        fun getFinalSheetCacheList(activity: FragmentActivity): List<FinalTimeSheetData> {
+        fun getFinalSheetCacheList(activity: Activity): List<FinalTimeSheetData> {
             for (files in activity.cacheDir.listFiles()!!) {
                 if (files.name == "final.txt") {
                     Log.i("TK Final Output", File(files.toString()).readText(UTF_8))

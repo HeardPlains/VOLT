@@ -1,36 +1,36 @@
 package com.volt.ui.Authentication
 
 
-import android.app.TimePickerDialog
-import android.icu.util.Calendar
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Build
 import android.os.Build.VERSION_CODES.M
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.Button
-import android.widget.Spinner
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.setMargins
+import androidx.core.view.setPadding
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.transition.FragmentTransitionSupport
-import com.volt.MainActivity
 import com.volt.R
 import com.volt.databinding.FragmentAuthenticationBinding
+import com.volt.ui.check_in.pages.AssignCardFragment
 import com.volt.voltdata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ActiveTimeSheetData
-import com.volt.voltdata.apidata.FinalTimeSheetData
+import com.volt.voltdata.apidata.EmployeeData
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.Pages
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 
 class AuthenticationFragment : Fragment() {
@@ -46,23 +46,37 @@ class AuthenticationFragment : Fragment() {
     @RequiresApi(M)
     override fun onStart() {
         super.onStart()
-
+        updatePage()
     }
 
-    @ExperimentalSerializationApi
+    private fun clearEmpList(linearLayout: LinearLayout){
+        if (linearLayout.size > 1) linearLayout.removeAllViews()
+    }
+
     @RequiresApi(M)
-    fun updatePage() {
-        AppHandler.pageUpdate(requireActivity())
-        if (AppHandler.connection) {
-            CacheHandler.refreshCacheData(requireActivity())
-        }
-    }
+    private fun generateEmpList(){
 
+        val inList = arrayListOf<EmployeeData>()
+        val outList = arrayListOf<EmployeeData>()
+        for (entry in CacheHandler.getEmployeeCacheList(requireActivity())) {
+            if (entry.status == 1) {
+                inList.add(entry)
+            } else {
+                outList.add(entry)
+            }
+        }
+        clearEmpList(requireView().findViewById(R.id.Linlay))
+
+        //Generate Employee Card List
+        createContainerList(requireView().findViewById(R.id.Linlay), outList)
+        createPageBreak(requireView().findViewById(R.id.Linlay))
+        createContainerList(requireView().findViewById(R.id.Linlay), inList)
+    }
 
     @RequiresApi(M)
     private fun refreshPage() {
-        Thread.sleep(100)
-        val fragmentManager = parentFragmentManager
+        Thread.sleep(1000)
+        val fragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(
             R.id.nav_host_fragment_activity_main,
@@ -72,32 +86,8 @@ class AuthenticationFragment : Fragment() {
         fragmentTransaction.commit()
     }
 
-    @ExperimentalSerializationApi
-    private fun setVisibility(view: View) {
-        val manual = view.findViewById(R.id.manualPane) as ConstraintLayout
-        manual.visibility = View.VISIBLE
-        if (AppHandler.admin) {
-            AppHandler.renderEmployeesInSpinner(CacheHandler.getEmployeeCacheList(requireActivity()),
-                binding.empSpinner,
-                requireActivity())
-            AppHandler.renderTasksInSpinner(CacheHandler.getTaskCacheList(requireActivity()),
-                binding.taskSpinner,
-                requireActivity())
-            AppHandler.renderLocationsInSpinner(CacheHandler.getLocationCacheList(requireActivity()),
-                binding.locationSpinner,
-                requireActivity())
-        } else {
-            Toast.makeText(
-                requireActivity(),
-                "Please Enter Foreman ID in the Settings to View Data",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
 
     @RequiresApi(M)
-    @ExperimentalSerializationApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -107,31 +97,10 @@ class AuthenticationFragment : Fragment() {
 
         _binding = FragmentAuthenticationBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        binding.authenticationToggleButton.isChecked = true
 
 
         AppHandler.currentPage = Pages.AUTHENTICATION
-
-        binding.empSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View?,
-                position: Int,
-                id: Long,
-            ) {
-                val selectedItem =
-                    parent.getItemAtPosition(position).toString()
-                Log.i("TK Spinner", selectedItem)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-        binding.authenticationToggleButton.setOnClickListener {
-            Log.i("TK Button", binding.authenticationToggleButton.isChecked.toString())
-        }
-
-
+        binding.locationHeader.text = AppHandler.currentForeman.currentLocation
 
 
         return root
@@ -149,137 +118,249 @@ class AuthenticationFragment : Fragment() {
         return hours.toDouble() + ((minutes.toDouble() / 60))
     }
 
-    @ExperimentalSerializationApi
+
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+       generateEmpList()
+    }
 
-        val manual = view.findViewById(R.id.manualPane) as ConstraintLayout
-        manual.visibility = View.INVISIBLE
-        (activity as MainActivity?)!!.setFragmentRefreshListener(object :
-            MainActivity.FragmentRefreshListener {
-            override fun onRefresh(string: String) {
-                Log.i("TK Admin Check", "Worked Thrice!")
-                setVisibility(view)
+
+
+    fun dpToPx(dp: Int): Int {
+        val density: Float = requireContext().resources
+            .displayMetrics
+            .density
+        return (dp.toFloat() * density).roundToInt()
+    }
+
+
+    @ExperimentalSerializationApi
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun createContainerList(
+        linearLayout: LinearLayout,
+        emp_sheet: List<EmployeeData>,
+    ) {
+        for ((count, sheet) in emp_sheet.withIndex()) {
+            Log.i("TK Table", "Creating a table row: $sheet")
+
+            /* ---------------------------------------------------
+            NAVBAR STYLE
+            ----------------------------------------------------- */
+            val constraint = ConstraintLayout(requireActivity())
+            val constraintLayout: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.MATCH_PARENT,
+                dpToPx(60)
+            )
+
+            constraint.layoutParams = constraintLayout
+            constraint.setBackgroundResource(R.drawable.custom_constraint_light_grey)
+
+
+/* ---------------------------------------------------
+    Indicator Code
+----------------------------------------------------- */
+
+            val indicator = ConstraintLayout(requireActivity())
+            indicator.id = View.generateViewId()
+            val indicatorLayout: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(
+                dpToPx(15),
+                dpToPx(0)
+            )
+            indicatorLayout.bottomToBottom = ConstraintSet.PARENT_ID
+            indicatorLayout.circleRadius = dpToPx(10)
+            indicatorLayout.startToStart = ConstraintSet.PARENT_ID
+            indicatorLayout.topToTop = ConstraintSet.PARENT_ID
+            indicator.layoutParams = indicatorLayout
+            if (sheet.status == 0) {
+                indicator.setBackgroundResource(R.color.red)
+            } else {
+                indicator.setBackgroundResource(R.color.green)
             }
-        })
+
+            constraint.addView(indicator)
 
 
-        if (AppHandler.admin) {
-            binding.submitButton.setOnClickListener {
-                if ((requireView().findViewById(R.id.editTextTime) as Button).text.toString() == "Enter Time") {
-                    Toast.makeText(requireActivity(), "Please Enter a Time!", Toast.LENGTH_LONG)
-                        .show()
+/* ---------------------------------------------------
+    TextView Code
+----------------------------------------------------- */
 
-                } else {
-                    if (!binding.authenticationToggleButton.isChecked) {
-                        val name =
-                            (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString()
-                                .split(" ")
-                        val timeSheet = FinalTimeSheetData(
-                            name[0],
-                            name[1],
-                            (timeToDouble((requireView().findViewById(R.id.editTextTime) as Button).text.toString()) * 100).roundToInt() / 100.0
-                        )
-                        if (CacheHandler.finalSheetLogCheck(requireActivity(), timeSheet)) {
-                            if (AppHandler.connection) {
-                                apiHandler.postFinalTimeSheetWithTime(timeSheet)
-                                Toast.makeText(
-                                    requireActivity(),
-                                    (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged Out!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            } else {
-                                CacheHandler.addOffLineSignOut(timeSheet, requireActivity())
-                                Toast.makeText(
-                                    requireActivity(),
-                                    (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged Out Offline!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                CacheHandler.printAllCache(requireActivity())
-                                Log.i("TK Testing", CacheHandler.getOfflineSignOutCacheList(requireActivity()).toString())
-                            }
-                        } else {
-                            Toast.makeText(
-                                requireActivity(),
-                                "${name[0]} ${name[1]} Already In Offline Check Out!",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
+
+            val empText = TextView(activity)
+            empText.id = View.generateViewId()
+            val txtlay: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            )
+            txtlay.marginStart = dpToPx(32)
+            txtlay.bottomToBottom = ConstraintSet.PARENT_ID
+            txtlay.topToTop = ConstraintSet.PARENT_ID
+            txtlay.startToEnd = indicator.id
+            empText.text = ("${sheet.first_name} ${sheet.last_name}")
+            empText.setTextAppearance(R.style.fontForEmpListBlack)
+            empText.layoutParams = txtlay
+            constraint.addView(empText)
+
+
+/* ---------------------------------------------------
+    Button Code
+----------------------------------------------------- */
+
+            val timeBtn = Button(activity)
+            timeBtn.id = View.generateViewId()
+            val btnlay: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(
+                dpToPx(150),
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            )
+            btnlay.bottomToBottom = ConstraintSet.PARENT_ID
+            btnlay.endToEnd = ConstraintSet.PARENT_ID
+            btnlay.topToTop = ConstraintSet.PARENT_ID
+            timeBtn.layoutParams = btnlay
+            if (sheet.status == 1) {
+                timeBtn.text = "Check Out"
+            } else {
+                timeBtn.text = "Check In"
+            }
+            btnlay.marginEnd = dpToPx(12)
+            timeBtn.setPadding(dpToPx(4))
+            timeBtn.setTextAppearance(R.style.fontForEmpListWhite)
+            timeBtn.setBackgroundResource(R.color.steel_blue)
+            constraint.addView(timeBtn)
+
+            /* ---------------------------------------------------
+                Add Linear Invisible Buttons
+            ----------------------------------------------------- */
+            val invisLinLay = LinearLayout(requireActivity())
+            invisLinLay.id = sheet.emp_id
+            val invisConstraints: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.MATCH_PARENT,
+                ConstraintLayout.LayoutParams.MATCH_PARENT,
+            )
+            invisLinLay.gravity = Gravity.CENTER
+            invisLinLay.weightSum = 10f
+            invisLinLay.layoutParams = invisConstraints
+            invisLinLay.elevation = 5f
+
+            /* ---------------------------------------------------
+                Button Code
+            ----------------------------------------------------- */
+
+            val manualInputButton = ConstraintLayout(requireActivity())
+            val manbtnlay: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                4f
+            )
+            manualInputButton.layoutParams = manbtnlay
+            manualInputButton.setBackgroundColor(Color.argb(0, 0, 255, 0))
+            //manualInputButton.visibility = View.GONE
+            invisLinLay.addView(manualInputButton)
+
+            Log.i("TK Button", invisLinLay.id.toString())
+
+
+
+            manualInputButton.setOnClickListener {
+                Log.i("TK Button", invisLinLay.id.toString())
+                val fragmentManager = requireActivity().supportFragmentManager
+                val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+                val fragment = EmployeePreviewFragment().newInstance()
+                val arguments = Bundle()
+                arguments.putInt("emp_id", invisLinLay.id)
+                fragment.arguments = arguments
+                fragmentTransaction.replace(
+                    R.id.nav_host_fragment_activity_main,
+                    fragment
+                )
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.commit()
+            }
+
+
+            /* ---------------------------------------------------
+              Button Code
+          ----------------------------------------------------- */
+
+            val signInButton = ConstraintLayout(requireActivity())
+            val signbtnlay: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                6f
+            )
+            signInButton.layoutParams = signbtnlay
+            signInButton.setBackgroundColor(Color.argb(0, 0, 0, 255))
+            //signinButton.visibility = View.GONE
+            invisLinLay.addView(signInButton)
+
+            signInButton.setOnClickListener {
+
+                Log.i("TK Button", invisLinLay.id.toString())
+
+                val timeSheet = ActiveTimeSheetData(
+                    sheet.id,
+                    invisLinLay.id,
+                    sheet.first_name,
+                    sheet.last_name,
+                    "time",
+                    sheet.current_task,
+                    sheet.current_location,
+                    7,
+                    "date"
+                )
+                if (CacheHandler.activeSheetLogCheck(requireActivity(), timeSheet)) {
+                    if (AppHandler.connection) {
+                        apiHandler.postActiveTimeSheet(timeSheet)
+                        Toast.makeText(
+                            requireActivity(),
+                            "${sheet.first_name} ${sheet.last_name} Logged In!",
+                            Toast.LENGTH_LONG
+                        ).show()
                     } else {
-
-                        val name =
-                            (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString()
-                                .split(" ")
-                        val timeSheet = ActiveTimeSheetData(
-                            1,
-                            Random.nextInt(1000000, 9999999),
-                            name[0],
-                            name[1],
-                            (requireView().findViewById(R.id.editTextTime) as Button).text.toString(),
-                            (requireView().findViewById(R.id.locationSpinner) as Spinner).selectedItem.toString(),
-                            (requireView().findViewById(R.id.taskSpinner) as Spinner).selectedItem.toString(),
-                            7
-                        )
-                        if (CacheHandler.activeSheetLogCheck(requireActivity(), timeSheet)) {
-                            if (AppHandler.connection) {
-                                apiHandler.postActiveTimeSheetWithTime(timeSheet)
-                                Toast.makeText(
-                                    requireActivity(),
-                                    (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged In!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            } else {
-                                CacheHandler.addOffLineSignIn(timeSheet, requireActivity())
-                                Toast.makeText(
-                                    requireActivity(),
-                                    (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged In Offline!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                CacheHandler.printAllCache(requireActivity())
-                                Log.i("TK Testing", CacheHandler.getOfflineSignInCacheList(requireActivity()).toString())
-                            }
-                        } else {
-                            Toast.makeText(
-                                requireActivity(),
-                                "${name[0]} ${name[1]} Already Checked In!",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
+                        CacheHandler.addOffLineSignIn(timeSheet, requireActivity())
+                        Toast.makeText(
+                            requireActivity(),
+                            (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged In Offline!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        CacheHandler.printAllCache(requireActivity())
+                        Log.i("TK Testing",
+                            CacheHandler.getOfflineSignInCacheList(requireActivity()).toString())
                     }
                 }
                 refreshPage()
             }
-        } else {
-            Toast.makeText(
-                requireActivity(),
-                "Please Enter Foreman ID in the Settings to View Data",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-        binding.editTextTime.setOnClickListener {
-//            val dateFormat: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-//            val cal = Calendar.getInstance()
-//            System.out.println(dateFormat.format(cal.time))
-            val c: Calendar = Calendar.getInstance()
-            val mHour = c.get(Calendar.HOUR)
-            val mMinute = c.get(Calendar.MINUTE)
 
-            val timePickerDialog = TimePickerDialog(
-                requireActivity(),
-                { _, hourOfDay, min ->
-                    val hour = if (hourOfDay < 10) "0$hourOfDay" else hourOfDay
-                    val minute = if (min < 10) "0$min" else min
-                    binding.editTextTime.text = "$hour:$minute:00"
-                },
-                mHour,
-                mMinute,
-                false
-            )
-            timePickerDialog.show()
-        }
 
-        updatePage()
+
+
+            constraint.addView(invisLinLay)
+            linearLayout.addView(constraint, count + 1)
+        }
+    }
+
+
+
+
+
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun createPageBreak(
+        linearLayout: LinearLayout,
+    ) {
+        /* ---------------------------------------------------
+        NAVBAR STYLE
+        ----------------------------------------------------- */
+        val constraint = ConstraintLayout(requireActivity())
+        val constraintLayout: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.MATCH_PARENT,
+            dpToPx(2)
+        )
+        constraintLayout.setMargins(dpToPx(5))
+        constraint.layoutParams = constraintLayout
+        constraint.setBackgroundColor(Color.parseColor("#77FFFFFF"))
+
+        linearLayout.addView(constraint, 1)
 
     }
 
@@ -288,4 +369,14 @@ class AuthenticationFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    @ExperimentalSerializationApi
+    @RequiresApi(M)
+    fun updatePage() {
+        AppHandler.pageUpdate(requireActivity())
+        if (AppHandler.connection) {
+            CacheHandler.refreshCacheData(requireActivity())
+        }
+    }
 }
+

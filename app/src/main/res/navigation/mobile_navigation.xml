@@ -22,7 +22,11 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.volt.ui.Authentication.AuthenticationFragment"
         android:label="Authentication"
-        tools:layout="@layout/fragment_authentication" />
+        tools:layout="@layout/fragment_authentication" >
+        <action
+            android:id="@+id/action_navigation_dashboard_to_employee_preview"
+            app:destination="@id/employee_preview" />
+    </fragment>
 
 
     <fragment
@@ -49,6 +53,11 @@
         android:name="com.volt.LogFragment"
         android:label="fragment_log"
         tools:layout="@layout/fragment_log" />
+    <fragment
+        android:id="@+id/employee_preview"
+        android:name="com.volt.employee_preview"
+        android:label="fragment_employee_preview"
+        tools:layout="@layout/fragment_employee_preview" />
 
 
 </navigation>

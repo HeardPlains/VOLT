@@ -7,198 +7,68 @@
     android:background="@drawable/pane_background"
     tools:context=".ui.Authentication.AuthenticationFragment">
 
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="724dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:src="@drawable/semi_circle"
+            android:translationZ="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/dddsasdf"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/location_header"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="65dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="66dp"
+            android:fontFamily="@font/montserrat"
+            android:text="Location Code"
+            android:textColor="#000000"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:translationZ="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            android:fontFamily="@font/noto_sans">
+        <ScrollView
+            android:id="@+id/scrollView3"
+            android:layout_width="match_parent"
+            android:layout_height="671dp"
+            android:paddingTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/location_header">
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginBottom="16dp"
-
-                android:src="@drawable/semi_circle"
-                app:layout_constraintBottom_toTopOf="@+id/new_emp_btn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-
-                android:id="@+id/textView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:fontFamily="@font/noto_sans"
-                android:text="Scanning..."
-                android:textColor="@color/black"
-                android:textSize="30sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageButton
-                android:id="@+id/new_emp_btn"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="48dp"
-                android:background="@drawable/custom_nfc_button"
-                android:contentDescription="@string/new_employee"
-                android:src="@drawable/sensor"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.495"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView6" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/manualPane"
+            <LinearLayout
+                android:id="@+id/Linlay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/noto_sans"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/new_emp_btn">
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/noto_sans"
-                    android:text="- Manual Submit -"
-                    android:textColor="#000000"
-                    android:textSize="34sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.498"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-
-                <Spinner
-                    android:theme="@style/spinnerTheme"
+                    android:fontFamily="@font/montserrat"
+                    android:text="Click on employee name for manual entry"
                     android:textAlignment="center"
-                    android:id="@+id/empSpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/steel_blue"
-                    android:fontFamily="@font/noto_sans"
-                    android:hint="@string/last_name"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="20"
-                    app:helperText="Required"
-                    app:helperTextTextColor="@color/red"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" />
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+        </ScrollView>
 
 
-                <Spinner
-                    android:theme="@style/spinnerTheme"
-                    android:id="@+id/taskSpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/steel_blue"
-                    android:hint="@string/last_name"
-                    android:textAlignment="center"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="20"
-                    app:helperText="Required"
-                    app:helperTextTextColor="@color/red"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/empSpinner" />
-
-                <Spinner
-                    android:theme="@style/spinnerTheme"
-                    android:id="@+id/locationSpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/steel_blue"
-                    android:hint="@string/last_name"
-                    android:textAlignment="center"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="20"
-                    app:helperText="Required"
-                    app:helperTextTextColor="@color/red"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/taskSpinner" />
-
-
-
-                <Button
-
-                    android:id="@+id/editTextTime"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:ems="10"
-                    android:fontFamily="@font/noto_sans"
-                    android:padding="16dp"
-                    android:text="Enter Time"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/locationSpinner" />
-
-
-                <ToggleButton
-                    android:id="@+id/authenticationToggleButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/steel_blue"
-                    android:checked="true"
-                    android:drawableTop="@drawable/in_door_white"
-                    android:fontFamily="@font/noto_sans"
-                    android:padding="8dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/white"
-                    android:textOff="Check Out"
-                    android:textOn="Check In"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextTime" />
-
-
-                <Button
-                    android:id="@+id/submitButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="80dp"
-                    android:fontFamily="@font/noto_sans"
-                    android:textColor="@color/white"
-                    android:text="Manual Submit"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/authenticationToggleButton" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,6 +20,8 @@ data class ActiveTimeSheetData(
     @SerializedName("task_code")
     val task_code: String,
     @SerializedName("foreman_id")
-    val foreman_id: Int
+    val foreman_id: Int,
+    @SerializedName("date")
+    val date: String
 )
 

@@ -24,7 +24,6 @@ class ApiHandler {
                 response: Response<ActiveTimeSheetData>
             ) {
 
-
             }
 
             override fun onFailure(call: Call<ActiveTimeSheetData>, t: Throwable) {
@@ -32,6 +31,9 @@ class ApiHandler {
             }
         })
     }
+
+
+
 
     fun postFinalTimeSheet(time_sheet: FinalTimeSheetData) {
 
@@ -66,6 +68,22 @@ class ApiHandler {
     }
 
     fun postActiveTimeSheetWithTime(time_sheet: ActiveTimeSheetData) {
+
+        val call: Call<ActiveTimeSheetData> = api.postTimeSheetWithTime(time_sheet)
+        call.enqueue(object : Callback<ActiveTimeSheetData> {
+            override fun onResponse(
+                call: Call<ActiveTimeSheetData>,
+                response: Response<ActiveTimeSheetData>
+            ) {
+            }
+
+            override fun onFailure(call: Call<ActiveTimeSheetData>, t: Throwable) {
+            }
+
+        })
+    }
+
+    fun postManualActiveTimeSheet(time_sheet: ActiveTimeSheetData) {
 
         val call: Call<ActiveTimeSheetData> = api.postTimeSheetWithTime(time_sheet)
         call.enqueue(object : Callback<ActiveTimeSheetData> {

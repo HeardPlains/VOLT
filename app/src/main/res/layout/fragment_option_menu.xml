@@ -130,17 +130,17 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/empIdCheckInButton"
+                android:id="@+id/manualEntry"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/custom_button_constraint"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/logConstraint">
+                app:layout_constraintTop_toBottomOf="@+id/imageView">
 
                 <ImageButton
-                    android:id="@+id/testButton"
+                    android:id="@+id/testButton3"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="16dp"
@@ -154,7 +154,7 @@
                     app:layout_constraintVertical_bias="0.0" />
 
                 <ImageButton
-                    android:id="@+id/testButton2"
+                    android:id="@+id/testButton4"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="32dp"
@@ -169,14 +169,14 @@
                     app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
-                    android:id="@+id/testText"
+                    android:id="@+id/testText1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="100dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
                     android:fontFamily="@font/noto_sans"
-                    android:text="Assign Card"
+                    android:text="Manual Entry"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"

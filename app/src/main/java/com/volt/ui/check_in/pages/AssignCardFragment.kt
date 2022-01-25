@@ -42,7 +42,7 @@ class AssignCardFragment : Fragment() {
 //            CacheHandler.refreshCacheData(requireActivity())
 //        }
 //    }
-    @ExperimentalSerializationApi
+
     @RequiresApi(M)
     override fun onCreateView(
         inflater: LayoutInflater,

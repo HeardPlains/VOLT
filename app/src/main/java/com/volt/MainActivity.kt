@@ -4,6 +4,10 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.nfc.*
 import android.nfc.tech.Ndef
 import android.os.Build
@@ -36,8 +40,8 @@ import kotlin.math.roundToInt
 import kotlin.random.Random
 
 
-//const val BASE_URL = "http://10.0.0.119:80/"
-const val BASE_URL = "http://73.243.134.128:80/"
+const val BASE_URL = "http://10.0.0.119:80/"
+//const val BASE_URL = "http://73.243.134.128:80/"
 
 
 @ExperimentalSerializationApi
@@ -57,6 +61,7 @@ class MainActivity : AppCompatActivity() {
     // Pending intent for NFC intent foreground dispatch.
     // Used to read all NDEF tags while the app is running in the foreground.
     private var nfcPendingIntent: PendingIntent? = null
+
 
 
     fun setCardName(str: String) {
@@ -83,9 +88,30 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val builder = NetworkRequest.Builder()
+        builder.addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+
+
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkRequest = builder.build()
+        connectivityManager.registerDefaultNetworkCallback(object  : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                Log.i("TK Network", "Default -> Network Available")
+                for (sheet in CacheHandler.getFinalSheetCacheList(this@MainActivity)){
+                    Log.i("TK Network Print", sheet.toString() )
+                }
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                Log.i("TK Network", "Default -> Connection lost")
+            }
+        })
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -242,7 +268,8 @@ class MainActivity : AppCompatActivity() {
             cal.time.toString().split(" ")[3],
             locationCode,
             taskCode,
-            7
+            7,
+            "date"
         )
         if (CacheHandler.activeSheetLogCheck(this, timeSheet)) {
             if (AppHandler.connection) {

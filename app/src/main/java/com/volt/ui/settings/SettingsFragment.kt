@@ -26,7 +26,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
 
     @RequiresApi(Build.VERSION_CODES.M)
-    @ExperimentalSerializationApi
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 
 

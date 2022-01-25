@@ -17,7 +17,6 @@ class AppHandler {
         var admin = false
         var currentPage = Pages.SETTINGS
         var currentForeman: CurrentForeman = CurrentForeman("", "", 0, "")
-        var authenticationToggle = false
         var currentCardAssign: CurrentCardAssign = CurrentCardAssign("", "")
         var connection = false
         val offlineSignIns = arrayListOf<ActiveTimeSheetData>()

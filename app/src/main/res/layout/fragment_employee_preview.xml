@@ -131,7 +131,7 @@
                 android:layout_height="wrap_content">
 
                 <Switch
-                    android:id="@+id/switch1"
+                    android:id="@+id/foreman_switch"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginEnd="86dp"

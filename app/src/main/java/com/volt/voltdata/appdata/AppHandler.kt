@@ -55,8 +55,10 @@ class AppHandler {
             list: List<TaskData>,
             spinner: Spinner,
             activity: FragmentActivity,
+            hint: String
         ) {
             val taskValues = arrayListOf<String>()
+            taskValues.add(hint)
 
             for (sheet in list) {
                 taskValues.add(sheet.display_name)
@@ -75,8 +77,10 @@ class AppHandler {
             list: List<LocationData>,
             spinner: Spinner,
             activity: FragmentActivity,
+            hint: String
         ) {
             val locationValues = arrayListOf<String>()
+            locationValues.add(hint)
 
             for (sheet in list) {
                 locationValues.add(sheet.display_name)

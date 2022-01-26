@@ -3,13 +3,13 @@
 
     <item
         android:id="@+id/navigation_check_in"
-        android:icon="@drawable/in_door"
-        android:title="Menu" />
+        android:icon="@drawable/clock"
+        android:title="Recent Logs" />
 
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/out_door"
-        android:title="Card Authentication" />
+        android:title="Authentication" />
 
     <item
         android:id="@+id/settingsFragment"

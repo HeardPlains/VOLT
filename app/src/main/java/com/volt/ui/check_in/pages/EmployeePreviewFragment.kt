@@ -1,36 +1,25 @@
 package com.volt.ui.Authentication
 
 
-import android.annotation.SuppressLint
 import android.app.TimePickerDialog
-import android.graphics.Color
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Build.VERSION_CODES.M
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.view.setMargins
-import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import com.volt.R
-import com.volt.databinding.FragmentAuthenticationBinding
 import com.volt.databinding.FragmentEmployeePreviewBinding
 import com.volt.voltdata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ActiveTimeSheetData
-import com.volt.voltdata.apidata.EmployeeData
 import com.volt.voltdata.apidata.FinalTimeSheetData
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.Pages
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import okhttp3.Cache
 import java.util.*
@@ -94,13 +83,29 @@ class EmployeePreviewFragment : Fragment() {
     }
 
     private fun setVisibility(view: View) {
+        var taskHint = ""
+        var locationHint = ""
+        var foremanChecked = false
+        val arguments = arguments
+        var passedEmpId = arguments!!.getInt("emp_id")
+        for (emp in CacheHandler.getEmployeeCacheList(requireActivity())) {
+            if (passedEmpId == emp.emp_id) {
+                taskHint = emp.current_task
+                locationHint = emp.current_location
+                foremanChecked = emp.foreman == 1
+            }
+        }
         if (AppHandler.admin) {
             AppHandler.renderTasksInSpinner(CacheHandler.getTaskCacheList(requireActivity()),
                 binding.taskSpinner,
-                requireActivity())
+                requireActivity(),
+                taskHint
+            )
             AppHandler.renderLocationsInSpinner(CacheHandler.getLocationCacheList(requireActivity()),
                 binding.locationSpinner,
-                requireActivity())
+                requireActivity(),
+                locationHint)
+            binding.foremanSwitch.isChecked = foremanChecked
         } else {
             Toast.makeText(
                 requireActivity(),
@@ -109,6 +114,7 @@ class EmployeePreviewFragment : Fragment() {
             ).show()
         }
     }
+
 
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -139,7 +145,7 @@ class EmployeePreviewFragment : Fragment() {
         binding.editDateTime.setOnClickListener {
             val c: Calendar = Calendar.getInstance()
             val mDay = c.get(Calendar.DAY_OF_MONTH)
-            val mMonth = c.get(Calendar.MONTH)  + 1
+            val mMonth = c.get(Calendar.MONTH) + 1
             val mYear = c.get(Calendar.YEAR)
 
             val datePickerDialog = DatePickerDialog(
@@ -163,15 +169,29 @@ class EmployeePreviewFragment : Fragment() {
                     Toast.makeText(requireActivity(), "Please Enter a Time!", Toast.LENGTH_LONG)
                         .show()
 
+                } else if ((requireView().findViewById(R.id.editDateTime) as Button).text.toString() == "Enter Date") {
+                    Toast.makeText(requireActivity(), "Please Enter a Date!", Toast.LENGTH_LONG)
+                        .show()
                 } else {
+                    val arguments = arguments
+                    val passedEmpId = arguments!!.getInt("emp_id")
+                    var firstName = ""
+                    var lastName = ""
+                    var task = ""
+                    var location = ""
+                    for (emp in CacheHandler.getEmployeeCacheList(requireActivity())){
+                        if (emp.emp_id == passedEmpId){
+                            firstName = emp.first_name
+                            lastName = emp.last_name
+                            task = emp.current_task
+                            location = emp.current_location
+                        }
+                    }
                     if (!binding.authenticationToggleButton.isChecked) {
-                        val name =
-                            (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString()
-                                .split(" ")
-                        val arguments = arguments
-                        var passedEmpId = arguments!!.getInt("emp_id")
                         val timeSheet = FinalTimeSheetData(
                             passedEmpId,
+                            (requireView().findViewById(R.id.editDateTime) as Button).text.toString(),
+                            (requireView().findViewById(R.id.editTextTime) as Button).text.toString(),
                             (timeToDouble((requireView().findViewById(R.id.editTextTime) as Button).text.toString()) * 100).roundToInt() / 100.0
                         )
                         if (CacheHandler.finalSheetLogCheck(requireActivity(), timeSheet)) {
@@ -179,64 +199,56 @@ class EmployeePreviewFragment : Fragment() {
                                 apiHandler.postFinalTimeSheetWithTime(timeSheet)
                                 Toast.makeText(
                                     requireActivity(),
-                                    (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged Out!",
+                                    "$firstName $lastName Logged Out!",
                                     Toast.LENGTH_LONG
                                 ).show()
                             } else {
                                 CacheHandler.addOffLineSignOut(timeSheet, requireActivity())
                                 Toast.makeText(
                                     requireActivity(),
-                                    (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged Out Offline!",
+                                    "$firstName $lastName Logged Out Offline!",
                                     Toast.LENGTH_LONG
                                 ).show()
-                                CacheHandler.printAllCache(requireActivity())
-                                Log.i("TK Testing", CacheHandler.getOfflineSignOutCacheList(requireActivity()).toString())
                             }
                         } else {
                             Toast.makeText(
                                 requireActivity(),
-                                "${name[0]} ${name[1]} Already In Offline Check Out!",
+                                "$firstName $lastName Already In Offline Check Out!",
                                 Toast.LENGTH_LONG
                             ).show()
                         }
                     } else {
-
-                        val name =
-                            (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString()
-                                .split(" ")
                         val timeSheet = ActiveTimeSheetData(
                             1,
-                            Random.nextInt(1000000, 9999999),
-                            name[0],
-                            name[1],
+                            passedEmpId,
+                            firstName,
+                            lastName,
                             (requireView().findViewById(R.id.editTextTime) as Button).text.toString(),
                             (requireView().findViewById(R.id.locationSpinner) as Spinner).selectedItem.toString(),
                             (requireView().findViewById(R.id.taskSpinner) as Spinner).selectedItem.toString(),
                             7,
-                            "date"
+                            (requireView().findViewById(R.id.editDateTime) as Button).text.toString()
                         )
                         if (CacheHandler.activeSheetLogCheck(requireActivity(), timeSheet)) {
                             if (AppHandler.connection) {
                                 apiHandler.postActiveTimeSheetWithTime(timeSheet)
                                 Toast.makeText(
                                     requireActivity(),
-                                    (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged In!",
+                                     "$firstName $lastName Logged In!",
                                     Toast.LENGTH_LONG
                                 ).show()
                             } else {
                                 CacheHandler.addOffLineSignIn(timeSheet, requireActivity())
                                 Toast.makeText(
                                     requireActivity(),
-                                    (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged In Offline!",
+                                    "$firstName $lastName Logged In Offline!",
                                     Toast.LENGTH_LONG
                                 ).show()
-                                CacheHandler.printAllCache(requireActivity())
-                                Log.i("TK Testing", CacheHandler.getOfflineSignInCacheList(requireActivity()).toString())
                             }
                         } else {
                             Toast.makeText(
                                 requireActivity(),
-                                "${name[0]} ${name[1]} Already Checked In!",
+                                "$firstName $lastName Already Checked In!",
                                 Toast.LENGTH_LONG
                             ).show()
                         }

@@ -1,8 +1,6 @@
 package com.volt.ui.check_in.pages
 
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Build.VERSION_CODES.M
 import android.os.Bundle
 import android.util.Log
@@ -14,12 +12,10 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.volt.voltdata.ApiHandler
-import com.volt.MainActivity
 import com.volt.databinding.FragmentAssignCardBinding
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.Pages
-import kotlinx.serialization.ExperimentalSerializationApi
 
 
 class AssignCardFragment : Fragment() {
@@ -53,17 +49,17 @@ class AssignCardFragment : Fragment() {
         _binding = FragmentAssignCardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        AppHandler.currentPage = Pages.ASSIGN_CARD
-        if (AppHandler.admin) {
-            AppHandler.renderEmployeesInSpinner(CacheHandler.getEmployeeCacheList(requireActivity()), binding.empSpinner, requireActivity())
-            AppHandler.renderTasksInSpinner(CacheHandler.getTaskCacheList(requireActivity()), binding.taskSpinner, requireActivity())
-        } else {
-            Toast.makeText(
-                requireActivity(),
-                "Please Enter Foreman ID in the Settings to View Data",
-                Toast.LENGTH_LONG
-            ).show()
-        }
+//        AppHandler.currentPage = Pages.ASSIGN_CARD
+//        if (AppHandler.admin) {
+//            AppHandler.renderEmployeesInSpinner(CacheHandler.getEmployeeCacheList(requireActivity()), binding.empSpinner, requireActivity())
+//            AppHandler.renderTasksInSpinner(CacheHandler.getTaskCacheList(requireActivity()), binding.taskSpinner, requireActivity())
+//        } else {
+//            Toast.makeText(
+//                requireActivity(),
+//                "Please Enter Foreman ID in the Settings to View Data",
+//                Toast.LENGTH_LONG
+//            ).show()
+//        }
 
 
         binding.empSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

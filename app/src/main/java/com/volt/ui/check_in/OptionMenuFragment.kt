@@ -68,16 +68,7 @@ class OptionMenuFragment : Fragment() {
 
 
 
-        binding.manualEntry.setOnClickListener {
-            val fragmentManager = requireActivity().supportFragmentManager
-            val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(
-                R.id.nav_host_fragment_activity_main,
-                AssignCardFragment().newInstance()
-            )
-            fragmentTransaction.addToBackStack(null)
-            fragmentTransaction.commit()
-        }
+
 
         binding.logConstraint.setOnClickListener {
             val fragmentManager = requireActivity().supportFragmentManager

@@ -297,6 +297,8 @@ class AuthenticationFragment : Fragment() {
 
                     val timeSheet = FinalTimeSheetData(
                         sheet.emp_id,
+                        " ",
+                        " ",
                         (timeToDouble(Calendar.getInstance().time.toString()
                             .split(" ")[3]) * 100).roundToInt() / 100.0
                     )

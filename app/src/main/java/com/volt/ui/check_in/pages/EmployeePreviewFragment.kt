@@ -69,8 +69,7 @@ class EmployeePreviewFragment : Fragment() {
 
         AppHandler.currentPage = Pages.EMPLOYEE_ENTRY
         val arguments = arguments
-        var passedEmpId = 0
-        passedEmpId = arguments!!.getInt("emp_id")
+        var passedEmpId = arguments!!.getInt("emp_id")
         Log.i("TK EMP_ID", passedEmpId.toString())
         for (emp in CacheHandler.getEmployeeCacheList(requireActivity())) {
             if (emp.emp_id == passedEmpId) {
@@ -169,9 +168,10 @@ class EmployeePreviewFragment : Fragment() {
                         val name =
                             (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString()
                                 .split(" ")
+                        val arguments = arguments
+                        var passedEmpId = arguments!!.getInt("emp_id")
                         val timeSheet = FinalTimeSheetData(
-                            name[0],
-                            name[1],
+                            passedEmpId,
                             (timeToDouble((requireView().findViewById(R.id.editTextTime) as Button).text.toString()) * 100).roundToInt() / 100.0
                         )
                         if (CacheHandler.finalSheetLogCheck(requireActivity(), timeSheet)) {

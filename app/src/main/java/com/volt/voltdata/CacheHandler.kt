@@ -285,7 +285,7 @@ class CacheHandler() {
         @ExperimentalSerializationApi
         fun finalSheetLogCheck(activity: FragmentActivity, sheet: FinalTimeSheetData): Boolean {
             for (active in getOfflineSignOutCacheList(activity)) {
-                if (sheet.first_name == active.first_name && sheet.last_name == active.last_name) {
+                if (sheet.emp_id == active.emp_id) {
                     return false
                 }
             }

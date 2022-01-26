@@ -27,9 +27,11 @@ import com.volt.voltdata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ActiveTimeSheetData
 import com.volt.voltdata.apidata.EmployeeData
+import com.volt.voltdata.apidata.FinalTimeSheetData
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.Pages
 import kotlinx.serialization.ExperimentalSerializationApi
+import java.util.*
 import kotlin.math.roundToInt
 
 
@@ -49,12 +51,12 @@ class AuthenticationFragment : Fragment() {
         updatePage()
     }
 
-    private fun clearEmpList(linearLayout: LinearLayout){
+    private fun clearEmpList(linearLayout: LinearLayout) {
         if (linearLayout.size > 1) linearLayout.removeAllViews()
     }
 
     @RequiresApi(M)
-    private fun generateEmpList(){
+    private fun generateEmpList() {
 
         val inList = arrayListOf<EmployeeData>()
         val outList = arrayListOf<EmployeeData>()
@@ -75,12 +77,16 @@ class AuthenticationFragment : Fragment() {
 
     @RequiresApi(M)
     private fun refreshPage() {
-        Thread.sleep(1000)
+        updatePage()
         val fragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+        val fragment = TransitionFragment().newInstance()
+        val arguments = Bundle()
+        arguments.putString("fragment", "Authentication")
+        fragment.arguments = arguments
         fragmentTransaction.replace(
             R.id.nav_host_fragment_activity_main,
-            AuthenticationFragment().newInstance()
+            fragment
         )
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
@@ -111,20 +117,12 @@ class AuthenticationFragment : Fragment() {
         return AuthenticationFragment()
     }
 
-    private fun timeToDouble(time: String): Double {
-        Log.i("TK Testing", (time.split(":")[0]))
-        val hours = (time.split(":")[0]).toInt()
-        val minutes = (time.split(":")[1]).toInt()
-        return hours.toDouble() + ((minutes.toDouble() / 60))
-    }
-
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-       generateEmpList()
+        generateEmpList()
     }
-
 
 
     fun dpToPx(dp: Int): Int {
@@ -292,43 +290,86 @@ class AuthenticationFragment : Fragment() {
             signInButton.setBackgroundColor(Color.argb(0, 0, 0, 255))
             //signinButton.visibility = View.GONE
             invisLinLay.addView(signInButton)
+            if (sheet.status == 1) {
+                signInButton.setOnClickListener {
 
-            signInButton.setOnClickListener {
+                    Log.i("TK Button", invisLinLay.id.toString())
 
-                Log.i("TK Button", invisLinLay.id.toString())
-
-                val timeSheet = ActiveTimeSheetData(
-                    sheet.id,
-                    invisLinLay.id,
-                    sheet.first_name,
-                    sheet.last_name,
-                    "time",
-                    sheet.current_task,
-                    sheet.current_location,
-                    7,
-                    "date"
-                )
-                if (CacheHandler.activeSheetLogCheck(requireActivity(), timeSheet)) {
-                    if (AppHandler.connection) {
-                        apiHandler.postActiveTimeSheet(timeSheet)
-                        Toast.makeText(
-                            requireActivity(),
-                            "${sheet.first_name} ${sheet.last_name} Logged In!",
-                            Toast.LENGTH_LONG
-                        ).show()
+                    val timeSheet = FinalTimeSheetData(
+                        sheet.emp_id,
+                        (timeToDouble(Calendar.getInstance().time.toString()
+                            .split(" ")[3]) * 100).roundToInt() / 100.0
+                    )
+                    if (CacheHandler.finalSheetLogCheck(requireActivity(), timeSheet)) {
+                        if (AppHandler.connection) {
+                            apiHandler.postFinalTimeSheet(timeSheet)
+                            Toast.makeText(
+                                requireContext(),
+                                "${sheet.first_name} ${sheet.last_name} Logged Out!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else {
+                            CacheHandler.addOffLineSignOut(timeSheet, requireActivity())
+                            Toast.makeText(
+                                requireContext(),
+                                "${sheet.first_name} ${sheet.last_name} Logged Out Offline!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            CacheHandler.printAllCache(requireActivity())
+                            Log.i("TK Testing",
+                                CacheHandler.getOfflineSignOutCacheList(requireActivity())
+                                    .toString())
+                        }
                     } else {
-                        CacheHandler.addOffLineSignIn(timeSheet, requireActivity())
                         Toast.makeText(
-                            requireActivity(),
-                            (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged In Offline!",
+                            requireContext(),
+                            "${sheet.first_name} ${sheet.last_name} Already In Offline Check Out!",
                             Toast.LENGTH_LONG
                         ).show()
-                        CacheHandler.printAllCache(requireActivity())
-                        Log.i("TK Testing",
-                            CacheHandler.getOfflineSignInCacheList(requireActivity()).toString())
                     }
+                    refreshPage()
                 }
-                refreshPage()
+            } else {
+
+
+                signInButton.setOnClickListener {
+
+                    Log.i("TK Button", invisLinLay.id.toString())
+
+                    val timeSheet = ActiveTimeSheetData(
+                        sheet.id,
+                        invisLinLay.id,
+                        sheet.first_name,
+                        sheet.last_name,
+                        "time",
+                        sheet.current_task,
+                        sheet.current_location,
+                        7,
+                        "date"
+                    )
+                    if (CacheHandler.activeSheetLogCheck(requireActivity(), timeSheet)) {
+                        if (AppHandler.connection) {
+                            apiHandler.postActiveTimeSheet(timeSheet)
+                            Toast.makeText(
+                                requireActivity(),
+                                "${sheet.first_name} ${sheet.last_name} Logged In!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else {
+                            CacheHandler.addOffLineSignIn(timeSheet, requireActivity())
+                            Toast.makeText(
+                                requireActivity(),
+                                (requireView().findViewById(R.id.empSpinner) as Spinner).selectedItem.toString() + " Logged In Offline!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            CacheHandler.printAllCache(requireActivity())
+                            Log.i("TK Testing",
+                                CacheHandler.getOfflineSignInCacheList(requireActivity())
+                                    .toString())
+                        }
+                    }
+                    refreshPage()
+                }
             }
 
 
@@ -339,9 +380,12 @@ class AuthenticationFragment : Fragment() {
         }
     }
 
-
-
-
+    private fun timeToDouble(time: String): Double {
+        Log.i("TK Testing", (time.split(":")[0]))
+        val hours = (time.split(":")[0]).toInt()
+        val minutes = (time.split(":")[1]).toInt()
+        return hours.toDouble() + ((minutes.toDouble() / 60))
+    }
 
 
     @RequiresApi(Build.VERSION_CODES.M)

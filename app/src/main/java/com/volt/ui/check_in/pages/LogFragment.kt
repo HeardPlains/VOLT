@@ -7,6 +7,7 @@ import android.media.MediaExtractor
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Build.VERSION_CODES.M
+import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -289,7 +290,13 @@ class LogFragment : Fragment() {
             )
             val name = TextView(activity)
             val time = TextView(activity)
-            val fullName = sheet.first_name + " " + sheet.last_name
+            var fullName = ""
+            for (entry in CacheHandler.getEmployeeCacheList(requireActivity())){
+                if (sheet.emp_id ==  entry.emp_id) {
+                    fullName = entry.first_name + " " + entry.last_name
+                }
+            }
+
 
             name.text = fullName
             time.text = sheet.hours.toString()

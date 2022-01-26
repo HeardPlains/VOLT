@@ -58,6 +58,11 @@
         android:name="com.volt.employee_preview"
         android:label="fragment_employee_preview"
         tools:layout="@layout/fragment_employee_preview" />
+    <fragment
+        android:id="@+id/transitionFragment"
+        android:name="com.volt.TransitionFragment"
+        android:label="fragment_transition_fragment"
+        tools:layout="@layout/fragment_transition_fragment" />
 
 
 </navigation>

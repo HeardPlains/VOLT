@@ -4,8 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FinalTimeSheetData(
-    val first_name: String,
-    val last_name: String,
+    val emp_id: Int,
     val hours: Double
 )
 

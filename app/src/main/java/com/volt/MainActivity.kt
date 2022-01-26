@@ -168,308 +168,308 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        val action = intent.action
-        Log.i("TK Action", action.toString())
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    override fun onNewIntent(intent: Intent) {
+//        super.onNewIntent(intent)
+//        val action = intent.action
+//        Log.i("TK Action", action.toString())
+//
+//        try {
+//            if (NfcAdapter.ACTION_TECH_DISCOVERED == action
+//                || NfcAdapter.ACTION_NDEF_DISCOVERED == action ||
+//                NfcAdapter.ACTION_TAG_DISCOVERED == action
+//            ) {
+//                val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
+//                val ndef = Ndef.get(tag) ?: return
+//                if (ndef.isWritable) {
+//                    when (AppHandler.currentPage) {
+//                        Pages.AUTHENTICATION -> authenticationNFC(ndef)
+//                        Pages.SETTINGS -> settingsNFC(ndef)
+//                        Pages.ASSIGN_CARD -> assignCard(ndef)
+//                        else -> "$AppHandler.currentPage operator is invalid operator."
+//                    }
+//                }
+//            } else {
+//                Toast.makeText(this, "Write on text box!", Toast.LENGTH_SHORT).show()
+//            }
+//        } catch (Ex: Exception) {
+//            Toast.makeText(this, Ex.message, Toast.LENGTH_SHORT).show()
+//        }
+//
+//
+//    }
+//
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    private fun authenticationNFC(ndef: Ndef) {
+//        val records = ndef.cachedNdefMessage.records
+//        Log.i("TK Admin Check", String(records[0].payload).substring(3))
+//        if (String(records[0].payload).substring(3) == "Admin Card") {
+//            Log.i("TK Admin Check", String(records[0].payload).substring(3))
+//            if (getFragmentRefreshListener() != null) {
+//                getFragmentRefreshListener()!!.onRefresh(String(records[2].payload).substring(3))
+//            }
+//            return
+//        }
+//        if (AppHandler.admin) {
+//            if (CacheHandler.checkForActiveSignIn(ndef, this)) {
+//                checkInNFC(ndef)
+//            } else {
+//                checkOutNFC(ndef)
+//            }
+//        } else {
+//            Toast.makeText(
+//                this,
+//                "Please Enter ID in Settings Before Scanning a Card",
+//                Toast.LENGTH_LONG
+//            ).show()
+//        }
+//    }
+//
+//    @RequiresApi(Build.VERSION_CODES.M)
+//    private fun refreshPage() {
+//        Log.i("TK", "Refresh Called")
+//        Thread.sleep(100)
+//        Log.i("TK", "Refresh Called Twice")
+//        val fragmentManager = this.supportFragmentManager
+//        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+//        fragmentTransaction.replace(
+//            R.id.nav_host_fragment_activity_main,
+//            AuthenticationFragment().newInstance()
+//        )
+//        fragmentTransaction.addToBackStack(null)
+//        fragmentTransaction.commit()
+//    }
+//
+//
+//    @SuppressLint("SimpleDateFormat")
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    private fun checkInNFC(ndef: Ndef) {
+//        val records = ndef.cachedNdefMessage.records
+//        var name = ""
+//        var task = ""
+//        for ((index, record) in records.withIndex()) {
+//            Log.i("TK Record", String(record.payload))
+//            if (index == 0) name = String(record.payload).substring(3)
+//            if (index == 1) task = String(record.payload).substring(3)
+//        }
+//        val firstName = name.split(" ")[0]
+//        val lastName = name.split(" ")[1]
+//        val locationCode = AppHandler.currentForeman.currentLocation
+//        val taskCode = task
+//        val cal = Calendar.getInstance()
+//        Log.i("TK Scan",
+//            "Name: $firstName + $lastName , Time: ${cal.time.toString().split(" ")[3]}")
+//
+//        val timeSheet = ActiveTimeSheetData(
+//            1,
+//            Random.nextInt(1000000, 9999999),
+//            firstName,
+//            lastName,
+//            cal.time.toString().split(" ")[3],
+//            locationCode,
+//            taskCode,
+//            7,
+//            "date"
+//        )
+//        if (CacheHandler.activeSheetLogCheck(this, timeSheet)) {
+//            if (AppHandler.connection) {
+//                apiHandler.postActiveTimeSheet(timeSheet)
+//                Toast.makeText(
+//                    this,
+//                    "$firstName $lastName Logged In!",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//            } else {
+//                CacheHandler.addOffLineSignIn(timeSheet, this)
+//                Toast.makeText(
+//                    this,
+//                    "$firstName $lastName Logged In Offline!",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//                CacheHandler.printAllCache(this)
+//                Log.i("TK Testing",
+//                    CacheHandler.getOfflineSignInCacheList(this).toString())
+//            }
+//        } else {
+//            Toast.makeText(
+//                this,
+//                "$firstName $lastName Already In Offline Check In!",
+//                Toast.LENGTH_LONG
+//            ).show()
+//        }
+//
+//        refreshPage()
+//    }
+//
+//    private fun timeToDouble(time: String): Double {
+//        Log.i("TK Testing", (time.split(":")[0]))
+//        val hours = (time.split(":")[0]).toInt()
+//        val minutes = (time.split(":")[1]).toInt()
+//        return hours.toDouble() + ((minutes.toDouble() / 60))
+//    }
 
-        try {
-            if (NfcAdapter.ACTION_TECH_DISCOVERED == action
-                || NfcAdapter.ACTION_NDEF_DISCOVERED == action ||
-                NfcAdapter.ACTION_TAG_DISCOVERED == action
-            ) {
-                val tag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG) ?: return
-                val ndef = Ndef.get(tag) ?: return
-                if (ndef.isWritable) {
-                    when (AppHandler.currentPage) {
-                        Pages.AUTHENTICATION -> authenticationNFC(ndef)
-                        Pages.SETTINGS -> settingsNFC(ndef)
-                        Pages.ASSIGN_CARD -> assignCard(ndef)
-                        else -> "$AppHandler.currentPage operator is invalid operator."
-                    }
-                }
-            } else {
-                Toast.makeText(this, "Write on text box!", Toast.LENGTH_SHORT).show()
-            }
-        } catch (Ex: Exception) {
-            Toast.makeText(this, Ex.message, Toast.LENGTH_SHORT).show()
-        }
-
-
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun authenticationNFC(ndef: Ndef) {
-        val records = ndef.cachedNdefMessage.records
-        Log.i("TK Admin Check", String(records[0].payload).substring(3))
-        if (String(records[0].payload).substring(3) == "Admin Card") {
-            Log.i("TK Admin Check", String(records[0].payload).substring(3))
-            if (getFragmentRefreshListener() != null) {
-                getFragmentRefreshListener()!!.onRefresh(String(records[2].payload).substring(3))
-            }
-            return
-        }
-        if (AppHandler.admin) {
-            if (CacheHandler.checkForActiveSignIn(ndef, this)) {
-                checkInNFC(ndef)
-            } else {
-                checkOutNFC(ndef)
-            }
-        } else {
-            Toast.makeText(
-                this,
-                "Please Enter ID in Settings Before Scanning a Card",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun refreshPage() {
-        Log.i("TK", "Refresh Called")
-        Thread.sleep(100)
-        Log.i("TK", "Refresh Called Twice")
-        val fragmentManager = this.supportFragmentManager
-        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(
-            R.id.nav_host_fragment_activity_main,
-            AuthenticationFragment().newInstance()
-        )
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
-    }
-
-
-    @SuppressLint("SimpleDateFormat")
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun checkInNFC(ndef: Ndef) {
-        val records = ndef.cachedNdefMessage.records
-        var name = ""
-        var task = ""
-        for ((index, record) in records.withIndex()) {
-            Log.i("TK Record", String(record.payload))
-            if (index == 0) name = String(record.payload).substring(3)
-            if (index == 1) task = String(record.payload).substring(3)
-        }
-        val firstName = name.split(" ")[0]
-        val lastName = name.split(" ")[1]
-        val locationCode = AppHandler.currentForeman.currentLocation
-        val taskCode = task
-        val cal = Calendar.getInstance()
-        Log.i("TK Scan",
-            "Name: $firstName + $lastName , Time: ${cal.time.toString().split(" ")[3]}")
-
-        val timeSheet = ActiveTimeSheetData(
-            1,
-            Random.nextInt(1000000, 9999999),
-            firstName,
-            lastName,
-            cal.time.toString().split(" ")[3],
-            locationCode,
-            taskCode,
-            7,
-            "date"
-        )
-        if (CacheHandler.activeSheetLogCheck(this, timeSheet)) {
-            if (AppHandler.connection) {
-                apiHandler.postActiveTimeSheet(timeSheet)
-                Toast.makeText(
-                    this,
-                    "$firstName $lastName Logged In!",
-                    Toast.LENGTH_LONG
-                ).show()
-            } else {
-                CacheHandler.addOffLineSignIn(timeSheet, this)
-                Toast.makeText(
-                    this,
-                    "$firstName $lastName Logged In Offline!",
-                    Toast.LENGTH_LONG
-                ).show()
-                CacheHandler.printAllCache(this)
-                Log.i("TK Testing",
-                    CacheHandler.getOfflineSignInCacheList(this).toString())
-            }
-        } else {
-            Toast.makeText(
-                this,
-                "$firstName $lastName Already In Offline Check In!",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-
-        refreshPage()
-    }
-
-    private fun timeToDouble(time: String): Double {
-        Log.i("TK Testing", (time.split(":")[0]))
-        val hours = (time.split(":")[0]).toInt()
-        val minutes = (time.split(":")[1]).toInt()
-        return hours.toDouble() + ((minutes.toDouble() / 60))
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun checkOutNFC(ndef: Ndef) {
-        if (AppHandler.admin) {
-            val records = ndef.cachedNdefMessage.records
-            for (record in records) {
-                Log.i("TK Record", String(record.payload))
-            }
-            Toast.makeText(
-                applicationContext,
-                String(records[0].payload).substring(3) + " Signed Out",
-                Toast.LENGTH_SHORT
-            )
-                .show()
-            val name = String(records[0].payload).substring(3).split(" ")
-            val firstName = name[0]
-            val lastName = name[1]
-            val cal = Calendar.getInstance()
-            val timeSheet = FinalTimeSheetData(firstName,
-                lastName,
-                (timeToDouble(cal.time.toString().split(" ")[3]) * 100).roundToInt() / 100.0)
-            Log.i("TK Scan",
-                "Name: $firstName + $lastName , Time: ${
-                    (timeToDouble(cal.time.toString().split(" ")[3]) * 100).roundToInt() / 100.0
-                }")
-            if (CacheHandler.finalSheetLogCheck(this, timeSheet)) {
-                if (AppHandler.connection) {
-                    apiHandler.postFinalTimeSheet(timeSheet)
-                    Toast.makeText(
-                        this,
-                        "$firstName $lastName Logged Out!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    CacheHandler.addOffLineSignOut(timeSheet, this)
-                    Toast.makeText(
-                        this,
-                        "$firstName $lastName Logged Out Offline!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    CacheHandler.printAllCache(this)
-                    Log.i("TK Testing",
-                        CacheHandler.getOfflineSignOutCacheList(this).toString())
-                }
-            } else {
-                Toast.makeText(
-                    this,
-                    "$firstName $lastName Already In Offline Check Out!",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        } else {
-            Toast.makeText(
-                this,
-                "Please Enter ID in Settings Before Scanning a Card",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-        refreshPage()
-    }
-
-    private fun settingsNFC(ndef: Ndef) {
-        if (AppHandler.admin) {
-            if (settingValue == 1) {
-                val records = ndef.cachedNdefMessage.records
-                var list = ""
-                for (record in records) {
-                    Log.i("TK Record", String(record.payload).substring(3))
-                    list += String(record.payload).substring(3) + "\r"
-                }
-                Toast.makeText(
-                    applicationContext,
-                    list,
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else if (settingValue == 2) {
-                val message = NdefMessage(
-                    arrayOf(NdefRecord.createTextRecord("en", "Empty"))
-                )
-                ndef.connect()
-                ndef.writeNdefMessage(message)
-                ndef.close()
-                Toast.makeText(
-                    applicationContext,
-                    "Card Has Been Wiped!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else if (settingValue == 3) {
-                val message = NdefMessage(
-                    arrayOf(
-                        NdefRecord.createTextRecord("en", "Admin Card"),
-                        NdefRecord.createTextRecord("en", cardName),
-                        NdefRecord.createTextRecord("en", cardID),
-                    )
-                )
-                ndef.connect()
-                ndef.writeNdefMessage(message)
-                ndef.close()
-                Toast.makeText(
-                    applicationContext,
-                    "Foreman Card Created",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-        } else {
-
-            val records = ndef.cachedNdefMessage.records
-            for (record in records) {
-                Log.i("TK Record", String(record.payload).substring(3))
-            }
-            if (String(records[0].payload).substring(3) == "Admin Card") {
-                setCardID(String(records[2].payload).substring(3))
-                if (getFragmentRefreshListener() != null) {
-                    getFragmentRefreshListener()!!.onRefresh(String(records[2].payload).substring(3))
-                }
-
-                Toast.makeText(
-                    applicationContext,
-                    "Foreman Card Accepted!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                Toast.makeText(
-                    applicationContext,
-                    "Invalid Admin Card!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun assignCard(ndef: Ndef) {
-        if (AppHandler.admin) {
-            val message = NdefMessage(
-                arrayOf(
-                    NdefRecord.createTextRecord("en", AppHandler.currentCardAssign.empId),
-                    NdefRecord.createTextRecord("en", AppHandler.currentCardAssign.task),
-                    NdefRecord.createTextRecord(
-                        "en",
-                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
-                    )
-                )
-            )
-            ndef.connect()
-            ndef.writeNdefMessage(message)
-            ndef.close()
-            Toast.makeText(
-                applicationContext,
-                "Card Assigned to ${AppHandler.currentCardAssign.empId}",
-                Toast.LENGTH_SHORT
-            )
-                .show()
-        } else {
-            Toast.makeText(
-                this,
-                "Please Enter Foreman ID in Settings Before Scanning a Card",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-
-    }
+//    @RequiresApi(Build.VERSION_CODES.M)
+//    private fun checkOutNFC(ndef: Ndef) {
+//        if (AppHandler.admin) {
+//            val records = ndef.cachedNdefMessage.records
+//            for (record in records) {
+//                Log.i("TK Record", String(record.payload))
+//            }
+//            Toast.makeText(
+//                applicationContext,
+//                String(records[0].payload).substring(3) + " Signed Out",
+//                Toast.LENGTH_SHORT
+//            )
+//                .show()
+//            val name = String(records[0].payload).substring(3).split(" ")
+//            val firstName = name[0]
+//            val lastName = name[1]
+//            val cal = Calendar.getInstance()
+//            val timeSheet = FinalTimeSheetData(firstName,
+//                lastName,
+//                (timeToDouble(cal.time.toString().split(" ")[3]) * 100).roundToInt() / 100.0)
+//            Log.i("TK Scan",
+//                "Name: $firstName + $lastName , Time: ${
+//                    (timeToDouble(cal.time.toString().split(" ")[3]) * 100).roundToInt() / 100.0
+//                }")
+//            if (CacheHandler.finalSheetLogCheck(this, timeSheet)) {
+//                if (AppHandler.connection) {
+//                    apiHandler.postFinalTimeSheet(timeSheet)
+//                    Toast.makeText(
+//                        this,
+//                        "$firstName $lastName Logged Out!",
+//                        Toast.LENGTH_LONG
+//                    ).show()
+//                } else {
+//                    CacheHandler.addOffLineSignOut(timeSheet, this)
+//                    Toast.makeText(
+//                        this,
+//                        "$firstName $lastName Logged Out Offline!",
+//                        Toast.LENGTH_LONG
+//                    ).show()
+//                    CacheHandler.printAllCache(this)
+//                    Log.i("TK Testing",
+//                        CacheHandler.getOfflineSignOutCacheList(this).toString())
+//                }
+//            } else {
+//                Toast.makeText(
+//                    this,
+//                    "$firstName $lastName Already In Offline Check Out!",
+//                    Toast.LENGTH_LONG
+//                ).show()
+//            }
+//        } else {
+//            Toast.makeText(
+//                this,
+//                "Please Enter ID in Settings Before Scanning a Card",
+//                Toast.LENGTH_LONG
+//            ).show()
+//        }
+//        refreshPage()
+//    }
+//
+//    private fun settingsNFC(ndef: Ndef) {
+//        if (AppHandler.admin) {
+//            if (settingValue == 1) {
+//                val records = ndef.cachedNdefMessage.records
+//                var list = ""
+//                for (record in records) {
+//                    Log.i("TK Record", String(record.payload).substring(3))
+//                    list += String(record.payload).substring(3) + "\r"
+//                }
+//                Toast.makeText(
+//                    applicationContext,
+//                    list,
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            } else if (settingValue == 2) {
+//                val message = NdefMessage(
+//                    arrayOf(NdefRecord.createTextRecord("en", "Empty"))
+//                )
+//                ndef.connect()
+//                ndef.writeNdefMessage(message)
+//                ndef.close()
+//                Toast.makeText(
+//                    applicationContext,
+//                    "Card Has Been Wiped!",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            } else if (settingValue == 3) {
+//                val message = NdefMessage(
+//                    arrayOf(
+//                        NdefRecord.createTextRecord("en", "Admin Card"),
+//                        NdefRecord.createTextRecord("en", cardName),
+//                        NdefRecord.createTextRecord("en", cardID),
+//                    )
+//                )
+//                ndef.connect()
+//                ndef.writeNdefMessage(message)
+//                ndef.close()
+//                Toast.makeText(
+//                    applicationContext,
+//                    "Foreman Card Created",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//
+//        } else {
+//
+//            val records = ndef.cachedNdefMessage.records
+//            for (record in records) {
+//                Log.i("TK Record", String(record.payload).substring(3))
+//            }
+//            if (String(records[0].payload).substring(3) == "Admin Card") {
+//                setCardID(String(records[2].payload).substring(3))
+//                if (getFragmentRefreshListener() != null) {
+//                    getFragmentRefreshListener()!!.onRefresh(String(records[2].payload).substring(3))
+//                }
+//
+//                Toast.makeText(
+//                    applicationContext,
+//                    "Foreman Card Accepted!",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            } else {
+//                Toast.makeText(
+//                    applicationContext,
+//                    "Invalid Admin Card!",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        }
+//    }
+//
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    private fun assignCard(ndef: Ndef) {
+//        if (AppHandler.admin) {
+//            val message = NdefMessage(
+//                arrayOf(
+//                    NdefRecord.createTextRecord("en", AppHandler.currentCardAssign.empId),
+//                    NdefRecord.createTextRecord("en", AppHandler.currentCardAssign.task),
+//                    NdefRecord.createTextRecord(
+//                        "en",
+//                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+//                    )
+//                )
+//            )
+//            ndef.connect()
+//            ndef.writeNdefMessage(message)
+//            ndef.close()
+//            Toast.makeText(
+//                applicationContext,
+//                "Card Assigned to ${AppHandler.currentCardAssign.empId}",
+//                Toast.LENGTH_SHORT
+//            )
+//                .show()
+//        } else {
+//            Toast.makeText(
+//                this,
+//                "Please Enter Foreman ID in Settings Before Scanning a Card",
+//                Toast.LENGTH_LONG
+//            ).show()
+//        }
+//
+//    }
 
     private fun getFragmentRefreshListener(): FragmentRefreshListener? {
         return fragmentRefreshListener

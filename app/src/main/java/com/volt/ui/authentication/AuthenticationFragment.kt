@@ -1,4 +1,4 @@
-package com.volt.ui.Authentication
+package com.volt.ui.authentication
 
 
 import android.annotation.SuppressLint
@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.volt.R
 import com.volt.databinding.FragmentAuthenticationBinding
-import com.volt.ui.check_in.pages.AssignCardFragment
+import com.volt.ui.check_in.pages.EmployeePreviewFragment
 import com.volt.voltdata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ActiveTimeSheetData
@@ -30,11 +30,18 @@ import com.volt.voltdata.apidata.EmployeeData
 import com.volt.voltdata.apidata.FinalTimeSheetData
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.Pages
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
 
-
+@RequiresApi(M)
 class AuthenticationFragment : Fragment() {
 
 
@@ -45,11 +52,11 @@ class AuthenticationFragment : Fragment() {
     private val binding get() = _binding!!
     private val apiHandler = ApiHandler()
 
-    @RequiresApi(M)
     override fun onStart() {
         super.onStart()
         updatePage()
     }
+
 
     private fun clearEmpList(linearLayout: LinearLayout) {
         if (linearLayout.size > 1) linearLayout.removeAllViews()
@@ -75,23 +82,57 @@ class AuthenticationFragment : Fragment() {
         createContainerList(requireView().findViewById(R.id.Linlay), inList)
     }
 
-    @RequiresApi(M)
-    private fun refreshPage() {
-        updatePage()
-        val fragmentManager = requireActivity().supportFragmentManager
-        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-        val fragment = TransitionFragment().newInstance()
-        val arguments = Bundle()
-        arguments.putString("fragment", "Authentication")
-        fragment.arguments = arguments
-        fragmentTransaction.replace(
-            R.id.nav_host_fragment_activity_main,
-            fragment
-        )
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
+    private fun hideLin(){
+        binding.Linlay.visibility = View.GONE
+        binding.locationHeader.text = "Refreshing..."
     }
 
+    private fun showLin() {
+        binding.Linlay.visibility = View.VISIBLE
+    }
+
+    @RequiresApi(M)
+    private fun refreshPage() {
+        hideLin()
+        GlobalScope.launch { // launches coroutine in main thread
+            saveInDb()
+        }
+    }
+
+    private fun reloadPage() {
+        parentFragmentManager.beginTransaction().detach(this).commit()
+        parentFragmentManager.beginTransaction().detach(this).commit()
+        parentFragmentManager.beginTransaction().attach(this).commit()
+        showLin()
+    }
+
+
+    @SuppressLint("NewApi")
+    private suspend fun saveInDb() {
+        Log.i("TKCheck",
+            CacheHandler.getEmployeeCacheList(requireActivity()).isEmpty().toString() +
+                    DateTimeFormatter
+                        .ofPattern("ss.SSSSSS")
+                        .withZone(ZoneOffset.UTC)
+                        .format(Instant.now()))
+        GlobalScope.async {
+            delay(2000)
+            updatePage()
+            while (CacheHandler.getEmployeeCacheList(requireActivity()).isEmpty()) {
+                delay(1000)
+            }
+//            Log.i("TKCheck",
+//                CacheHandler.getEmployeeCacheList(requireActivity()).isEmpty().toString() +
+//                        DateTimeFormatter
+//                            .ofPattern("ss.SSSSSS")
+//                            .withZone(ZoneOffset.UTC)
+//                            .format(Instant.now()))
+//            Log.i("TKCheck",
+//                CacheHandler.getEmployeeCacheList(requireActivity()).toString())
+
+            reloadPage()
+        }
+    }
 
     @RequiresApi(M)
     override fun onCreateView(
@@ -261,7 +302,7 @@ class AuthenticationFragment : Fragment() {
 
             manualInputButton.setOnClickListener {
                 Log.i("TK Button", invisLinLay.id.toString())
-                val fragmentManager = requireActivity().supportFragmentManager
+                val fragmentManager = this.parentFragmentManager
                 val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
                 val fragment = EmployeePreviewFragment().newInstance()
                 val arguments = Bundle()

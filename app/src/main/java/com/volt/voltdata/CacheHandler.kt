@@ -29,9 +29,9 @@ class CacheHandler() {
         fun refreshCacheData(activity: FragmentActivity) {
             Log.i("TK Refresh", "Refreshing Api Data")
             deleteAll(activity)
-            apiHandler.getForemanData {
-                createCacheFile(activity, "foreman", it)
-            }
+//            apiHandler.getForemanData {
+//                createCacheFile(activity, "foreman", it)
+//            }
             apiHandler.getEmployeeData {
                 createCacheFile(activity, "employees", it)
             }
@@ -64,11 +64,11 @@ class CacheHandler() {
 
             if (list.isNotEmpty()) {
                 when (list[0]!!::class) {
-                    ForemanData::class -> {
-                        inputStream =
-                            ByteArrayInputStream(Json.encodeToString(list as List<ForemanData>)
-                                .toByteArray(UTF_8))
-                    }
+//                    ForemanData::class -> {
+//                        inputStream =
+//                            ByteArrayInputStream(Json.encodeToString(list as List<ForemanData>)
+//                                .toByteArray(UTF_8))
+//                    }
                     EmployeeData::class -> {
                         inputStream =
                             ByteArrayInputStream(Json.encodeToString(list as List<EmployeeData>)
@@ -170,17 +170,17 @@ class CacheHandler() {
             }
         }
 
-        @ExperimentalSerializationApi
-        fun getForemanCacheList(activity: FragmentActivity): List<ForemanData> {
-            for (files in activity.cacheDir.listFiles()!!) {
-                if (files.name == "foreman.txt") {
-                    Log.i("TK Foreman Output", File(files.toString()).readText(UTF_8))
-                    return Json.decodeFromString(File(files.toString()).readText(
-                        UTF_8))
-                }
-            }
-            return emptyList()
-        }
+//        @ExperimentalSerializationApi
+//        fun getForemanCacheList(activity: FragmentActivity): List<ForemanData> {
+//            for (files in activity.cacheDir.listFiles()!!) {
+//                if (files.name == "foreman.txt") {
+//                    Log.i("TK Foreman Output", File(files.toString()).readText(UTF_8))
+//                    return Json.decodeFromString(File(files.toString()).readText(
+//                        UTF_8))
+//                }
+//            }
+//            return emptyList()
+//        }
 
         @ExperimentalSerializationApi
         fun getEmployeeCacheList(activity: FragmentActivity): List<EmployeeData> {

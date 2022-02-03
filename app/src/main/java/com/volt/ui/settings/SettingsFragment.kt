@@ -169,7 +169,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val scanPreference: PreferenceCategory? = findPreference("scan_preferences")
         val cardPreferences: PreferenceCategory? = findPreference("card_preferences")
         scanPreference?.isVisible = AppHandler.admin
-        Log.i("TK Bool", showCard.toString())
+        //Log.i("TK Bool", showCard.toString())
         cardPreferences?.isVisible = showCard
 
     }
@@ -178,32 +178,34 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun adminCheck(value: String) {
         val foremanName: EditTextPreference? = findPreference("foreman_name")
         try {
-            for (sheet in CacheHandler.getForemanCacheList(requireActivity())) {
-                Log.i("TK Foreman ID", sheet.foreman_id.toString())
+            for (sheet in CacheHandler.getEmployeeCacheList(requireActivity())) {
+                Log.i("TK Foreman ID", sheet.emp_id.toString())
                 Log.i("TK Foreman ID2", value)
-                if (sheet.foreman_id == value.toInt()) {
-                    Log.i("TK Testing", "Should Print Now!")
-                    AppHandler.currentForeman = CurrentForeman(
-                        sheet.first_name,
-                        sheet.last_name,
-                        sheet.foreman_id,
-                        sheet.current_location
-                    )
-                    foremanName?.text = AppHandler.currentForeman.fullName
-                    AppHandler.admin = true
-                    (activity as MainActivity?)?.setSettingValue(1)
-                    setVisibility()
-                    return
+                if (sheet.emp_id == value.toInt()) {
+                    if(sheet.foreman == 1) {
+                        //Log.i("TK Testing", "Should Print Now!")
+                        AppHandler.currentForeman = CurrentForeman(
+                            sheet.first_name,
+                            sheet.last_name,
+                            sheet.emp_id,
+                            sheet.current_location
+                        )
+                        foremanName?.text = AppHandler.currentForeman.fullName
+                        AppHandler.admin = true
+                        (activity as MainActivity?)?.setSettingValue(1)
+                        setVisibility()
+                        return
+                    }
                 } else {
                     foremanName?.text = "";
                     AppHandler.admin = false
                     (activity as MainActivity?)?.setSettingValue(0)
                     showCard = false
                     setVisibility()
-                    Toast.makeText(requireActivity(), "Foreman ID Invalid!", Toast.LENGTH_LONG)
-                        .show()
                 }
             }
+            Toast.makeText(requireActivity(), "Foreman ID Invalid!", Toast.LENGTH_LONG)
+                .show()
         } catch (ex: NumberFormatException) {
             AppHandler.admin = false
             foremanName?.text = "";

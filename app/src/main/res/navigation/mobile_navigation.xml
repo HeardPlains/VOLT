@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_dashboard">
+    app:startDestination="@+id/settingsFragment">
 
     <fragment
         android:id="@+id/navigation_check_in"
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.volt.ui.Authentication.AuthenticationFragment"
+        android:name="com.volt.ui.authentication.AuthenticationFragment"
         android:label="Authentication"
         tools:layout="@layout/fragment_authentication" >
         <action

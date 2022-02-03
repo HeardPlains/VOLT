@@ -130,8 +130,7 @@ class LogFragment : Fragment() {
 
     @RequiresApi(M)
     private fun refreshPage() {
-        Thread.sleep(100)
-        val fragmentManager = requireActivity().supportFragmentManager
+        val fragmentManager = this.parentFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(
             R.id.nav_host_fragment_activity_main,

@@ -1,6 +1,5 @@
 package com.volt
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -9,35 +8,22 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.nfc.*
-import android.nfc.tech.Ndef
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.volt.databinding.ActivityMainBinding
-import com.volt.ui.Authentication.AuthenticationFragment
-import com.volt.ui.check_in.pages.LogFragment
 import com.volt.voltdata.ApiHandler
 import com.volt.voltdata.CacheHandler
-import com.volt.voltdata.apidata.ActiveTimeSheetData
-import com.volt.voltdata.apidata.FinalTimeSheetData
 import com.volt.voltdata.appdata.AppHandler
-import com.volt.voltdata.appdata.Pages
 import kotlinx.serialization.ExperimentalSerializationApi
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.math.roundToInt
-import kotlin.random.Random
 
 
 const val BASE_URL = "http://10.0.0.119:80/"

@@ -1,6 +1,7 @@
-package com.volt.ui.Authentication
+package com.volt.ui.check_in.pages
 
 
+import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import android.os.Build
 import android.os.Build.VERSION_CODES.M
@@ -12,19 +13,25 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.volt.R
 import com.volt.databinding.FragmentEmployeePreviewBinding
+import com.volt.ui.authentication.AuthenticationFragment
 import com.volt.voltdata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ActiveTimeSheetData
 import com.volt.voltdata.apidata.FinalTimeSheetData
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.Pages
-import kotlinx.serialization.ExperimentalSerializationApi
-import okhttp3.Cache
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
-import kotlin.random.Random
 import android.app.DatePickerDialog as DatePickerDialog
 
 
@@ -254,6 +261,7 @@ class EmployeePreviewFragment : Fragment() {
                         }
                     }
                 }
+                goBack()
             }
         } else {
             Toast.makeText(
@@ -264,6 +272,37 @@ class EmployeePreviewFragment : Fragment() {
         }
 
     }
+
+
+
+    @RequiresApi(M)
+    private fun gotoAuth() {
+        val fragmentManager = this.parentFragmentManager
+        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+        val fragment = AuthenticationFragment().newInstance()
+        fragmentTransaction.replace(
+            R.id.nav_host_fragment_activity_main,
+            fragment
+        )
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
+
+    }
+
+    private fun goBack(){
+        GlobalScope.launch { // launches coroutine in main thread
+            saveInDb()
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private suspend fun saveInDb() {
+        GlobalScope.async {
+            delay(1000)
+            gotoAuth()
+        }
+    }
+
 
     fun dpToPx(dp: Int): Int {
         val density: Float = requireContext().resources

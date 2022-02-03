@@ -101,24 +101,24 @@ class ApiHandler {
 
 
 
-    fun getForemanData(
-        func: (foremanData: List<ForemanData>) -> Unit
-    )  {
-        val employeeCall: Call<List<ForemanData>> = api.getForeman()
-        employeeCall.enqueue(object : Callback<List<ForemanData>> {
-            override fun onResponse(
-                call: Call<List<ForemanData>>,
-                response: Response<List<ForemanData>>
-            ) {
-                val rs: List<ForemanData> = response.body()!!
-                func(rs)
-            }
-
-            override fun onFailure(call: Call<List<ForemanData>>, t: Throwable) {
-                Log.i("TK Error", "${t.message}")
-            }
-        })
-    }
+//    fun getForemanData(
+//        func: (foremanData: List<ForemanData>) -> Unit
+//    )  {
+//        val employeeCall: Call<List<ForemanData>> = api.getForeman()
+//        employeeCall.enqueue(object : Callback<List<ForemanData>> {
+//            override fun onResponse(
+//                call: Call<List<ForemanData>>,
+//                response: Response<List<ForemanData>>
+//            ) {
+//                val rs: List<ForemanData> = response.body()!!
+//                func(rs)
+//            }
+//
+//            override fun onFailure(call: Call<List<ForemanData>>, t: Throwable) {
+//                Log.i("TK Error", "${t.message}")
+//            }
+//        })
+//    }
 
     fun getEmployeeData(
         func: (foremanData: List<EmployeeData>) -> Unit

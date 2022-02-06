@@ -1,4 +1,4 @@
-package com.volt.ui.check_in.pages
+package com.volt.ui.pages
 
 
 import android.os.Build.VERSION_CODES.M
@@ -8,14 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import com.volt.voltdata.ApiHandler
+import com.volt.voltdata.apidata.ApiHandler
 import com.volt.databinding.FragmentAssignCardBinding
-import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.appdata.AppHandler
-import com.volt.voltdata.appdata.Pages
 
 
 class AssignCardFragment : Fragment() {

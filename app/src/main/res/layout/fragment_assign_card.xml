@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/pane_background"
-    tools:context=".ui.check_in.pages.AssignCardFragment">
+    tools:context=".ui.pages.AssignCardFragment">
 
     <ScrollView
         android:layout_width="match_parent"

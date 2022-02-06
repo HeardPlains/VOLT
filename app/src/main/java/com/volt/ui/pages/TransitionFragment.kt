@@ -1,4 +1,4 @@
-package com.volt.ui.authentication
+package com.volt.ui.pages
 
 
 import android.os.Build
@@ -15,8 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.volt.R
 import com.volt.databinding.FragmentTransitionFragementBinding
-import com.volt.ui.check_in.pages.EmployeePreviewFragment
-import com.volt.voltdata.ApiHandler
+import com.volt.voltdata.apidata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.appdata.AppHandler
 import kotlinx.serialization.ExperimentalSerializationApi

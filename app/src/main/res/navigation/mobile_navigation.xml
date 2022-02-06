@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_check_in"
-        android:name="com.volt.ui.check_in.OptionMenuFragment"
+        android:name="com.volt.ui.pages.OptionMenuFragment"
         android:label="Additional Options"
         tools:layout="@layout/fragment_option_menu" >
         <action
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.volt.ui.authentication.AuthenticationFragment"
+        android:name="com.volt.ui.pages.AuthenticationFragment"
         android:label="Authentication"
         tools:layout="@layout/fragment_authentication" >
         <action
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/navigation_new_emp"
-        android:name="com.volt.ui.check_in.pages.AssignCardFragment"
+        android:name="com.volt.ui.pages.AssignCardFragment"
         android:label="Check In"
         tools:layout="@layout/fragment_assign_card" />
     <fragment
@@ -46,7 +46,7 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.volt.ui.settings.SettingsFragment"
+        android:name="com.volt.ui.pages.SettingsFragment"
         android:label="Settings" />
     <fragment
         android:id="@+id/logFragment"

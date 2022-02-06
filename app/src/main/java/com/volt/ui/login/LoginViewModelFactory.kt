@@ -2,8 +2,8 @@ package com.volt.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.volt.data.LoginDataSource
-import com.volt.data.LoginRepository
+import com.volt.voltdata.data.LoginDataSource
+import com.volt.voltdata.data.LoginRepository
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.

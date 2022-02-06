@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/pane_background"
     android:fontFamily="@font/noto_sans"
-    tools:context=".ui.check_in.OptionMenuFragment">
+    tools:context=".ui.pages.OptionMenuFragment">
 
 
     <ScrollView
@@ -30,7 +30,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/logConstraint"
                 android:layout_width="match_parent"
-                android:layout_height="750dp"
+                android:layout_height="500dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"

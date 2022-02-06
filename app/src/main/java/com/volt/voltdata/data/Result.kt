@@ -1,4 +1,4 @@
-package com.volt.data
+package com.volt.voltdata.data
 
 /**
  * A generic class that holds a value with its loading status.

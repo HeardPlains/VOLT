@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
-import com.volt.data.LoginRepository
-import com.volt.data.Result
+import com.volt.voltdata.data.LoginRepository
+import com.volt.voltdata.data.Result
 
 import com.volt.R
 

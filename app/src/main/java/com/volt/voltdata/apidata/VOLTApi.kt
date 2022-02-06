@@ -1,4 +1,4 @@
-package com.volt.voltdata
+package com.volt.voltdata.apidata
 
 import com.volt.voltdata.apidata.*
 import retrofit2.Call

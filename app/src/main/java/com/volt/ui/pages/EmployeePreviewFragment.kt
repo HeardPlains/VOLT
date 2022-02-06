@@ -1,4 +1,4 @@
-package com.volt.ui.check_in.pages
+package com.volt.ui.pages
 
 
 import android.annotation.SuppressLint
@@ -16,8 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.volt.R
 import com.volt.databinding.FragmentEmployeePreviewBinding
-import com.volt.ui.authentication.AuthenticationFragment
-import com.volt.voltdata.ApiHandler
+import com.volt.voltdata.apidata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ActiveTimeSheetData
 import com.volt.voltdata.apidata.FinalTimeSheetData
@@ -27,9 +26,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
+import kotlinx.serialization.ExperimentalSerializationApi
 import java.util.*
 import kotlin.math.roundToInt
 import android.app.DatePickerDialog as DatePickerDialog
@@ -277,9 +274,10 @@ class EmployeePreviewFragment : Fragment() {
 
     @RequiresApi(M)
     private fun gotoAuth() {
-        val fragmentManager = this.parentFragmentManager
+        val fragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
         val fragment = AuthenticationFragment().newInstance()
+        fragmentTransaction.remove(this).commit()
         fragmentTransaction.replace(
             R.id.nav_host_fragment_activity_main,
             fragment
@@ -299,7 +297,18 @@ class EmployeePreviewFragment : Fragment() {
     private suspend fun saveInDb() {
         GlobalScope.async {
             delay(1000)
+            updatePage()
+            delay(1000)
             gotoAuth()
+        }
+    }
+
+    @ExperimentalSerializationApi
+    @RequiresApi(M)
+    fun updatePage() {
+        AppHandler.pageUpdate(requireActivity())
+        if (AppHandler.connection) {
+            CacheHandler.refreshCacheData(requireActivity())
         }
     }
 
@@ -317,52 +326,3 @@ class EmployeePreviewFragment : Fragment() {
         _binding = null
     }
 }
-
-
-//    @ExperimentalSerializationApi
-//    @RequiresApi(M)
-//    fun updatePage() {
-//        AppHandler.pageUpdate(requireActivity())
-//        if (AppHandler.connection) {
-//            CacheHandler.refreshCacheData(requireActivity())
-//        }
-//    }
-//
-//
-//    @RequiresApi(M)
-//    private fun refreshPage() {
-//        Thread.sleep(100)
-//        val fragmentManager = requireActivity().supportFragmentManager
-//        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-//        fragmentTransaction.replace(
-//            R.id.nav_host_fragment_activity_main,
-//            AuthenticationFragment().newInstance()
-//        )
-//        fragmentTransaction.addToBackStack(null)
-//        fragmentTransaction.commit()
-//    }
-//
-//    @ExperimentalSerializationApi
-//    private fun setVisibility(view: View) {
-//        val manual = view.findViewById(R.id.manualPane) as ConstraintLayout
-//        manual.visibility = View.VISIBLE
-//        if (AppHandler.admin) {
-//            AppHandler.renderEmployeesInSpinner(CacheHandler.getEmployeeCacheList(requireActivity()),
-//                binding.empSpinner,
-//                requireActivity())
-//            AppHandler.renderTasksInSpinner(CacheHandler.getTaskCacheList(requireActivity()),
-//                binding.taskSpinner,
-//                requireActivity())
-//            AppHandler.renderLocationsInSpinner(CacheHandler.getLocationCacheList(requireActivity()),
-//                binding.locationSpinner,
-//                requireActivity())
-//        } else {
-//            Toast.makeText(
-//                requireActivity(),
-//                "Please Enter Foreman ID in the Settings to View Data",
-//                Toast.LENGTH_LONG
-//            ).show()
-//        }
-//    }
-//
-//

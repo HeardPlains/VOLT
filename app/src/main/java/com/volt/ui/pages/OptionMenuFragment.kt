@@ -1,4 +1,4 @@
-package com.volt.ui.check_in
+package com.volt.ui.pages
 
 import android.os.Build
 import android.os.Bundle
@@ -14,12 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.volt.R
 import com.volt.databinding.FragmentOptionMenuBinding
-import com.volt.ui.check_in.pages.AssignCardFragment
-import com.volt.ui.check_in.pages.LogFragment
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ActiveTimeSheetData
 import com.volt.voltdata.appdata.AppHandler
-import kotlinx.serialization.ExperimentalSerializationApi
 
 
 class OptionMenuFragment : Fragment() {

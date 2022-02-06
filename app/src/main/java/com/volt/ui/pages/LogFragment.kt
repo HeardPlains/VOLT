@@ -1,36 +1,26 @@
-package com.volt.ui.check_in.pages
+package com.volt.ui.pages
 
 
-import android.content.Context
 import android.graphics.Color
-import android.media.MediaExtractor
-import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Build.VERSION_CODES.M
-import android.os.Build.VERSION_CODES.P
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.TableLayout
 import androidx.annotation.RequiresApi
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
-import com.google.android.material.tabs.TabLayout
 import com.volt.R
 import com.volt.databinding.FragmentLogBinding
-import com.volt.voltdata.ApiHandler
+import com.volt.voltdata.apidata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ActiveTimeSheetData
 import com.volt.voltdata.apidata.FinalTimeSheetData
 import com.volt.voltdata.appdata.AppHandler
-import kotlinx.serialization.ExperimentalSerializationApi
-import okhttp3.Cache
 
 
 class LogFragment : Fragment() {

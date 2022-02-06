@@ -1,4 +1,4 @@
-package com.volt.ui.authentication
+package com.volt.ui.pages
 
 
 import android.annotation.SuppressLint
@@ -22,8 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.volt.R
 import com.volt.databinding.FragmentAuthenticationBinding
-import com.volt.ui.check_in.pages.EmployeePreviewFragment
-import com.volt.voltdata.ApiHandler
+import com.volt.voltdata.apidata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ActiveTimeSheetData
 import com.volt.voltdata.apidata.EmployeeData
@@ -302,7 +301,7 @@ class AuthenticationFragment : Fragment() {
 
             manualInputButton.setOnClickListener {
                 Log.i("TK Button", invisLinLay.id.toString())
-                val fragmentManager = this.parentFragmentManager
+                val fragmentManager = this.requireParentFragment().parentFragmentManager
                 val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
                 val fragment = EmployeePreviewFragment().newInstance()
                 val arguments = Bundle()

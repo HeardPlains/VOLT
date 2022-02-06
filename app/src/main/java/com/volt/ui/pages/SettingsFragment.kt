@@ -1,4 +1,4 @@
-package com.volt.ui.settings
+package com.volt.ui.pages
 
 import android.os.Build
 import android.os.Bundle
@@ -10,7 +10,6 @@ import androidx.preference.*
 import com.volt.MainActivity
 import com.volt.MainActivity.FragmentRefreshListener
 import com.volt.R
-import com.volt.voltdata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.CurrentForeman

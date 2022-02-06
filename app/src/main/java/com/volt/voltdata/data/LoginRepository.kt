@@ -1,6 +1,6 @@
-package com.volt.data
+package com.volt.voltdata.data
 
-import com.volt.data.model.LoggedInUser
+import com.volt.voltdata.data.model.LoggedInUser
 
 /**
  * Class that requests authentication and user information from the remote data source and

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/pane_background"
     android:fontFamily="@font/noto_sans"
-    tools:context=".ui.check_in.pages.LogFragment">
+    tools:context=".ui.pages.LogFragment">
 
 
     <ScrollView

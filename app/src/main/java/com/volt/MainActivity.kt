@@ -26,8 +26,8 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import java.util.*
 
 
-const val BASE_URL = "http://10.0.0.119:80/"
-//const val BASE_URL = "http://73.243.134.128:80/"
+//const val BASE_URL = "http://10.0.0.119:80/"
+const val BASE_URL = "http://73.243.134.128:80/"
 
 
 @ExperimentalSerializationApi

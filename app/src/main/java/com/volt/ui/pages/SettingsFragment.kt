@@ -167,9 +167,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun setVisibility() {
         val scanPreference: PreferenceCategory? = findPreference("scan_preferences")
         val cardPreferences: PreferenceCategory? = findPreference("card_preferences")
-        scanPreference?.isVisible = AppHandler.admin
+        scanPreference?.isVisible = false
         //Log.i("TK Bool", showCard.toString())
-        cardPreferences?.isVisible = showCard
+        cardPreferences?.isVisible = false
 
     }
 
@@ -182,7 +182,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 Log.i("TK Foreman ID2", value)
                 if (sheet.emp_id == value.toInt()) {
                     if(sheet.foreman == 1) {
-                        //Log.i("TK Testing", "Should Print Now!")
                         AppHandler.currentForeman = CurrentForeman(
                             sheet.first_name,
                             sheet.last_name,

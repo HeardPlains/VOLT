@@ -274,7 +274,7 @@ class EmployeePreviewFragment : Fragment() {
 
     @RequiresApi(M)
     private fun gotoAuth() {
-        val fragmentManager = requireActivity().supportFragmentManager
+        val fragmentManager = this.parentFragmentManager
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
         val fragment = AuthenticationFragment().newInstance()
         fragmentTransaction.remove(this).commit()

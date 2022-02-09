@@ -67,21 +67,24 @@ class AuthenticationFragment : Fragment() {
         val inList = arrayListOf<EmployeeData>()
         val outList = arrayListOf<EmployeeData>()
         for (entry in CacheHandler.getEmployeeCacheList(requireActivity())) {
-            if (entry.status == 1) {
-                inList.add(entry)
-            } else {
-                outList.add(entry)
+            if (entry.current_location == AppHandler.currentForeman.currentLocation || AppHandler.currentForeman.currentLocation == "All") {
+                if (entry.status == 1) {
+                    inList.add(entry)
+                } else {
+                    outList.add(entry)
+                }
             }
         }
         clearEmpList(requireView().findViewById(R.id.Linlay))
 
         //Generate Employee Card List
+        createScreenDepth(requireView().findViewById(R.id.Linlay))
         createContainerList(requireView().findViewById(R.id.Linlay), outList)
         createPageBreak(requireView().findViewById(R.id.Linlay))
         createContainerList(requireView().findViewById(R.id.Linlay), inList)
     }
 
-    private fun hideLin(){
+    private fun hideLin() {
         binding.Linlay.visibility = View.GONE
         binding.locationHeader.text = "Refreshing..."
     }
@@ -146,7 +149,9 @@ class AuthenticationFragment : Fragment() {
 
 
         AppHandler.currentPage = Pages.AUTHENTICATION
-        binding.locationHeader.text = AppHandler.currentForeman.currentLocation
+        if (AppHandler.admin) {
+            binding.locationHeader.text = AppHandler.currentForeman.currentLocation
+        }
 
 
         return root
@@ -161,7 +166,9 @@ class AuthenticationFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        generateEmpList()
+        if (AppHandler.admin) {
+            generateEmpList()
+        }
     }
 
 
@@ -275,10 +282,10 @@ class AuthenticationFragment : Fragment() {
                 ConstraintLayout.LayoutParams.MATCH_PARENT,
                 ConstraintLayout.LayoutParams.MATCH_PARENT,
             )
-            invisLinLay.gravity = Gravity.CENTER
+            invisLinLay.gravity = Gravity.LEFT
             invisLinLay.weightSum = 10f
             invisLinLay.layoutParams = invisConstraints
-            invisLinLay.elevation = 5f
+            invisLinLay.elevation = 10f
 
             /* ---------------------------------------------------
                 Button Code
@@ -288,7 +295,7 @@ class AuthenticationFragment : Fragment() {
             val manbtnlay: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                4f
+                5f
             )
             manualInputButton.layoutParams = manbtnlay
             manualInputButton.setBackgroundColor(Color.argb(0, 0, 255, 0))
@@ -301,7 +308,7 @@ class AuthenticationFragment : Fragment() {
 
             manualInputButton.setOnClickListener {
                 Log.i("TK Button", invisLinLay.id.toString())
-                val fragmentManager = this.requireParentFragment().parentFragmentManager
+                val fragmentManager = this.parentFragmentManager
                 val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
                 val fragment = EmployeePreviewFragment().newInstance()
                 val arguments = Bundle()
@@ -324,7 +331,7 @@ class AuthenticationFragment : Fragment() {
             val signbtnlay: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                6f
+                5f
             )
             signInButton.layoutParams = signbtnlay
             signInButton.setBackgroundColor(Color.argb(0, 0, 0, 255))
@@ -446,6 +453,23 @@ class AuthenticationFragment : Fragment() {
         constraint.layoutParams = constraintLayout
         constraint.setBackgroundColor(Color.parseColor("#77FFFFFF"))
 
+        linearLayout.addView(constraint, 1)
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun createScreenDepth(
+        linearLayout: LinearLayout,
+    ) {
+        /* ---------------------------------------------------
+        NAVBAR STYLE
+        ----------------------------------------------------- */
+        val constraint = ConstraintLayout(requireActivity())
+        val constraintLayout: ConstraintLayout.LayoutParams = ConstraintLayout.LayoutParams(
+            ConstraintLayout.LayoutParams.MATCH_PARENT,
+            dpToPx(500)
+        )
+        constraint.layoutParams = constraintLayout
         linearLayout.addView(constraint, 1)
 
     }

@@ -66,6 +66,22 @@ class ApiHandler {
         })
     }
 
+    fun postExtraFinalSheet(time_sheet: ExtraFinalTimeSheetData) {
+
+        val call: Call<ExtraFinalTimeSheetData> = api.postExtraFinalSheet(time_sheet)
+        call.enqueue(object : Callback<ExtraFinalTimeSheetData> {
+            override fun onResponse(
+                call: Call<ExtraFinalTimeSheetData>,
+                response: Response<ExtraFinalTimeSheetData>
+            ) {
+            }
+
+            override fun onFailure(call: Call<ExtraFinalTimeSheetData>, t: Throwable) {
+            }
+
+        })
+    }
+
     fun postActiveTimeSheetWithTime(time_sheet: ActiveTimeSheetData) {
 
         val call: Call<ActiveTimeSheetData> = api.postTimeSheetWithTime(time_sheet)
@@ -93,6 +109,23 @@ class ApiHandler {
             }
 
             override fun onFailure(call: Call<ActiveTimeSheetData>, t: Throwable) {
+            }
+
+        })
+    }
+
+
+    fun updateEmployee(employeeData: EmployeeData) {
+
+        val call: Call<EmployeeData> = api.updateEmployee(employeeData)
+        call.enqueue(object : Callback<EmployeeData> {
+            override fun onResponse(
+                call: Call<EmployeeData>,
+                response: Response<EmployeeData>
+            ) {
+            }
+
+            override fun onFailure(call: Call<EmployeeData>, t: Throwable) {
             }
 
         })

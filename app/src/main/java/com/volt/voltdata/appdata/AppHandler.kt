@@ -51,6 +51,30 @@ class AppHandler {
             adapter.notifyDataSetChanged()
         }
 
+
+        fun renderTextInSpinner(
+            list: List<String>,
+            spinner: Spinner,
+            activity: FragmentActivity,
+            hint: String
+        ) {
+            val taskValues = arrayListOf<String>()
+//            taskValues.add(hint)
+
+            for (sheet in list) {
+                taskValues.add(sheet)
+            }
+            val adapter =
+                ArrayAdapter(
+                    activity,
+                    R.layout.simple_spinner_item,
+                    taskValues
+                )
+            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = adapter
+            adapter.notifyDataSetChanged()
+        }
+
         fun renderTasksInSpinner(
             list: List<TaskData>,
             spinner: Spinner,

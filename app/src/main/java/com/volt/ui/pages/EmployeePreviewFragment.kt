@@ -16,10 +16,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.volt.R
 import com.volt.databinding.FragmentEmployeePreviewBinding
-import com.volt.voltdata.apidata.ApiHandler
 import com.volt.voltdata.CacheHandler
-import com.volt.voltdata.apidata.ActiveTimeSheetData
-import com.volt.voltdata.apidata.FinalTimeSheetData
+import com.volt.voltdata.apidata.*
 import com.volt.voltdata.appdata.AppHandler
 import com.volt.voltdata.appdata.Pages
 import kotlinx.coroutines.GlobalScope
@@ -91,7 +89,7 @@ class EmployeePreviewFragment : Fragment() {
         var locationHint = ""
         var foremanChecked = false
         val arguments = arguments
-        var passedEmpId = arguments!!.getInt("emp_id")
+        var passedEmpId = arguments!!.getInt("emp_id");
         for (emp in CacheHandler.getEmployeeCacheList(requireActivity())) {
             if (passedEmpId == emp.emp_id) {
                 taskHint = emp.current_task
@@ -100,6 +98,7 @@ class EmployeePreviewFragment : Fragment() {
             }
         }
         if (AppHandler.admin) {
+            val extraTypes = listOf("SICK", "PTO", "Call-Out", "NCNS")
             AppHandler.renderTasksInSpinner(CacheHandler.getTaskCacheList(requireActivity()),
                 binding.taskSpinner,
                 requireActivity(),
@@ -109,7 +108,11 @@ class EmployeePreviewFragment : Fragment() {
                 binding.locationSpinner,
                 requireActivity(),
                 locationHint)
-            binding.foremanSwitch.isChecked = foremanChecked
+            AppHandler.renderTextInSpinner(extraTypes,
+                binding.extraSpinner,
+                requireActivity(),
+                "SICK")
+
         } else {
             Toast.makeText(
                 requireActivity(),
@@ -118,7 +121,6 @@ class EmployeePreviewFragment : Fragment() {
             ).show()
         }
     }
-
 
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -166,8 +168,63 @@ class EmployeePreviewFragment : Fragment() {
             datePickerDialog.show()
         }
 
+        binding.editExtraDateTime.setOnClickListener {
+            val c: Calendar = Calendar.getInstance()
+            val mDay = c.get(Calendar.DAY_OF_MONTH)
+            val mMonth = c.get(Calendar.MONTH) + 1
+            val mYear = c.get(Calendar.YEAR)
+
+            val datePickerDialog = DatePickerDialog(
+                requireActivity(),
+                { _, Year, Month, Day ->
+                    val month = if (Month + 1 < 10) "0$Month" else Month
+                    val day = if (Day < 10) "0$Day" else Day
+                    binding.editExtraDateTime.text = "${month}/$day/$Year"
+                },
+                mYear,
+                mMonth,
+                mDay,
+            )
+            datePickerDialog.show()
+        }
+
 
         if (AppHandler.admin) {
+            binding.empUpdateBtn.setOnClickListener {
+                val arguments = arguments
+                val passedEmpId = arguments!!.getInt("emp_id")
+                var firstName = ""
+                var lastName = ""
+                for (emp in CacheHandler.getEmployeeCacheList(requireActivity())) {
+                    if (emp.emp_id == passedEmpId) {
+                        firstName = emp.first_name
+                        lastName = emp.last_name
+                    }
+                }
+                val employeeData = EmployeeData(
+                    1,
+                    passedEmpId,
+                    "",
+                    "",
+                    "",
+                    "",
+                    (requireView().findViewById(R.id.taskSpinner) as Spinner).selectedItem.toString(),
+                    (requireView().findViewById(R.id.locationSpinner) as Spinner).selectedItem.toString(),
+                    0,
+                    117,
+                    ""
+                )
+                if (AppHandler.connection) {
+                    apiHandler.updateEmployee(employeeData)
+                    Toast.makeText(
+                        requireActivity(),
+                        "$firstName $lastName Has Been Updated!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                goBack()
+            }
+
             binding.manualSubmit.setOnClickListener {
                 if ((requireView().findViewById(R.id.editTextTime) as Button).text.toString() == "Enter Time") {
                     Toast.makeText(requireActivity(), "Please Enter a Time!", Toast.LENGTH_LONG)
@@ -183,8 +240,8 @@ class EmployeePreviewFragment : Fragment() {
                     var lastName = ""
                     var task = ""
                     var location = ""
-                    for (emp in CacheHandler.getEmployeeCacheList(requireActivity())){
-                        if (emp.emp_id == passedEmpId){
+                    for (emp in CacheHandler.getEmployeeCacheList(requireActivity())) {
+                        if (emp.emp_id == passedEmpId) {
                             firstName = emp.first_name
                             lastName = emp.last_name
                             task = emp.current_task
@@ -196,8 +253,9 @@ class EmployeePreviewFragment : Fragment() {
                             passedEmpId,
                             (requireView().findViewById(R.id.editDateTime) as Button).text.toString(),
                             (requireView().findViewById(R.id.editTextTime) as Button).text.toString(),
-                            (timeToDouble((requireView().findViewById(R.id.editTextTime) as Button).text.toString()) * 100).roundToInt() / 100.0
-                        )
+                            (timeToDouble((requireView().findViewById(R.id.editTextTime) as Button).text.toString()) * 100).roundToInt() / 100.0,
+
+                            )
                         if (CacheHandler.finalSheetLogCheck(requireActivity(), timeSheet)) {
                             if (AppHandler.connection) {
                                 apiHandler.postFinalTimeSheetWithTime(timeSheet)
@@ -238,7 +296,7 @@ class EmployeePreviewFragment : Fragment() {
                                 apiHandler.postActiveTimeSheetWithTime(timeSheet)
                                 Toast.makeText(
                                     requireActivity(),
-                                     "$firstName $lastName Logged In!",
+                                    "$firstName $lastName Logged In!",
                                     Toast.LENGTH_LONG
                                 ).show()
                             } else {
@@ -268,8 +326,38 @@ class EmployeePreviewFragment : Fragment() {
             ).show()
         }
 
-    }
+        binding.extraSubmit.setOnClickListener {
+            val arguments = arguments
+            val passedEmpId = arguments!!.getInt("emp_id")
+            var firstName = ""
+            var lastName = ""
+            for (emp in CacheHandler.getEmployeeCacheList(requireActivity())) {
+                if (emp.emp_id == passedEmpId) {
+                    firstName = emp.first_name
+                    lastName = emp.last_name
+                }
+            }
+            val timeSheet = ExtraFinalTimeSheetData(
+                passedEmpId,
+                (requireView().findViewById(R.id.extra_spinner) as Spinner).selectedItem.toString(),
+                (requireView().findViewById(R.id.editExtraDateTime) as Button).text.toString(),
+                "",
+                0.0,
+                "Notes: " + (requireView().findViewById(R.id.editTextNotes) as EditText).text.toString()
+            )
 
+            if (AppHandler.connection) {
+                apiHandler.postExtraFinalSheet(timeSheet)
+                Toast.makeText(
+                    requireActivity(),
+                    "$firstName $lastName Notes Logged!",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            goBack()
+        }
+    }
 
 
     @RequiresApi(M)
@@ -287,7 +375,7 @@ class EmployeePreviewFragment : Fragment() {
 
     }
 
-    private fun goBack(){
+    private fun goBack() {
         GlobalScope.launch { // launches coroutine in main thread
             saveInDb()
         }

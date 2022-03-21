@@ -151,13 +151,13 @@ class EmployeePreviewFragment : Fragment() {
         binding.editDateTime.setOnClickListener {
             val c: Calendar = Calendar.getInstance()
             val mDay = c.get(Calendar.DAY_OF_MONTH)
-            val mMonth = c.get(Calendar.MONTH) + 1
+            val mMonth = c.get(Calendar.MONTH)
             val mYear = c.get(Calendar.YEAR)
 
             val datePickerDialog = DatePickerDialog(
                 requireActivity(),
                 { _, Year, Month, Day ->
-                    val month = if (Month + 1 < 10) "0$Month" else Month
+                    val month = if (Month + 1 < 10) "0${Month + 1}" else Month + 1
                     val day = if (Day < 10) "0$Day" else Day
                     binding.editDateTime.text = "${month}/$day/$Year"
                 },
@@ -171,13 +171,13 @@ class EmployeePreviewFragment : Fragment() {
         binding.editExtraDateTime.setOnClickListener {
             val c: Calendar = Calendar.getInstance()
             val mDay = c.get(Calendar.DAY_OF_MONTH)
-            val mMonth = c.get(Calendar.MONTH) + 1
+            val mMonth = c.get(Calendar.MONTH)
             val mYear = c.get(Calendar.YEAR)
 
             val datePickerDialog = DatePickerDialog(
                 requireActivity(),
                 { _, Year, Month, Day ->
-                    val month = if (Month + 1 < 10) "0$Month" else Month
+                    val month = if (Month + 1 < 10) "0${Month + 1}" else Month + 1
                     val day = if (Day < 10) "0$Day" else Day
                     binding.editExtraDateTime.text = "${month}/$day/$Year"
                 },

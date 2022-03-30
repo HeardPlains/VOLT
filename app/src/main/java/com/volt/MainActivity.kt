@@ -11,6 +11,7 @@ import android.nfc.*
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -26,8 +27,9 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import java.util.*
 
 
-//const val BASE_URL = "http://10.0.0.119:80/"
-const val BASE_URL = "http://73.243.134.128:80/"
+const val BASE_URL = "http://10.0.0.119:80/"
+//const val BASE_URL = "http://73.243.134.128:80/"
+//const val BASE_URL = "http://67.176.4.127:80/"
 
 
 @ExperimentalSerializationApi
@@ -47,7 +49,6 @@ class MainActivity : AppCompatActivity() {
     // Pending intent for NFC intent foreground dispatch.
     // Used to read all NDEF tags while the app is running in the foreground.
     private var nfcPendingIntent: PendingIntent? = null
-
 
 
     fun setCardName(str: String) {
@@ -71,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         if (AppHandler.connection) {
             CacheHandler.refreshCacheData(this)
         }
+        if (!AppHandler.admin) binding.navView.visibility = View.GONE
     }
 
 
@@ -82,14 +84,16 @@ class MainActivity : AppCompatActivity() {
         builder.addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
 
 
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkRequest = builder.build()
-        connectivityManager.registerDefaultNetworkCallback(object  : ConnectivityManager.NetworkCallback() {
+        connectivityManager.registerDefaultNetworkCallback(object :
+            ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 Log.i("TK Network", "Default -> Network Available")
-                for (sheet in CacheHandler.getFinalSheetCacheList(this@MainActivity)){
-                    Log.i("TK Network Print", sheet.toString() )
+                for (sheet in CacheHandler.getFinalSheetCacheList(this@MainActivity)) {
+                    Log.i("TK Network Print", sheet.toString())
                 }
             }
 
@@ -480,6 +484,10 @@ class MainActivity : AppCompatActivity() {
         } catch (ex: IllegalStateException) {
             Log.e("TK", "Error disabling NFC foreground dispatch", ex)
         }
+    }
+
+    fun showNavBar() {
+        binding.navView.visibility = View.VISIBLE
     }
 
 

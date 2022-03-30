@@ -31,16 +31,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         AppHandler.pageUpdate(requireActivity())
-        CacheHandler.printAllCache(requireActivity())
-
 
 
         AppHandler.currentPage = Pages.SETTINGS
         val foremanPreference: EditTextPreference? = findPreference("foreman_id")
+        foremanPreference?.text = AppHandler.currentForeman.foremanId.toString()
         adminCheck(foremanPreference?.text.toString())
         emptyCells()
 
-        updateList()
+//        updateList() //Todo remove outdated
         foremanPreference?.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, value ->
                 adminCheck(value as String)
@@ -154,6 +153,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onStart() {
         super.onStart()
+        val foremanPreference: EditTextPreference? = findPreference("foreman_id")
+        foremanPreference?.text = AppHandler.currentForeman.foremanId.toString()
         setVisibility()
     }
 
@@ -168,7 +169,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val scanPreference: PreferenceCategory? = findPreference("scan_preferences")
         val cardPreferences: PreferenceCategory? = findPreference("card_preferences")
         scanPreference?.isVisible = false
-        //Log.i("TK Bool", showCard.toString())
         cardPreferences?.isVisible = false
 
     }

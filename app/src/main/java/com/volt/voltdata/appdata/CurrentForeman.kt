@@ -7,7 +7,7 @@ class CurrentForeman(
     current_location: String
 ) {
     var firstName: String = first_name
-    private var foremanId: Int = foreman_id
+    var foremanId: Int = foreman_id
     var lastName: String = last_name
     var currentLocation: String = current_location
     var fullName: String = "$first_name $last_name"

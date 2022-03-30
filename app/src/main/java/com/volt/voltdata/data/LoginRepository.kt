@@ -1,5 +1,6 @@
 package com.volt.voltdata.data
 
+import android.util.Log
 import com.volt.voltdata.data.model.LoggedInUser
 
 /**
@@ -37,6 +38,17 @@ class LoginRepository(val dataSource: LoginDataSource) {
 
         return result
     }
+    fun login(foremanID: String): Result<LoggedInUser> {
+        // handle login
+        val result = dataSource.login(foremanID)
+
+        if (result is Result.Success) {
+            setLoggedInUser(result.data)
+        }
+
+        return result
+    }
+
 
     private fun setLoggedInUser(loggedInUser: LoggedInUser) {
         this.user = loggedInUser

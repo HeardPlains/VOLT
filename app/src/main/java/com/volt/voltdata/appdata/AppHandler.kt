@@ -21,6 +21,7 @@ class AppHandler {
         var connection = false
         val offlineSignIns = arrayListOf<ActiveTimeSheetData>()
         val offlineSignOuts = arrayListOf<FinalTimeSheetData>()
+        var employeeData = listOf<EmployeeData>()
 
 
         @ExperimentalSerializationApi

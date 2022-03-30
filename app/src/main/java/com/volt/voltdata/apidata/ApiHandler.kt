@@ -162,7 +162,6 @@ class ApiHandler {
                 response: Response<List<EmployeeData>>
             ) {
                 val rs: List<EmployeeData> = response.body()!!
-
                 func(rs)
             }
 

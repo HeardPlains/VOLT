@@ -27,7 +27,9 @@ class LoginDataSource {
 
         try {
             for (emp in AppHandler.employeeData) {
+                Log.i("TK ID Checking", "${emp.emp_id} ,${foremanID}")
                 if (emp.emp_id == foremanID.toInt()) {
+
                     if (emp.foreman == 1) {
                         AppHandler.currentForeman = CurrentForeman(
                             emp.first_name,

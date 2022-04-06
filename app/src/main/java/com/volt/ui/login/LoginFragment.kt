@@ -157,6 +157,15 @@ class LoginFragment : Fragment() {
     private fun showLoginFailed(@StringRes errorString: Int) {
 
         AppHandler.admin = false
+        val fragmentManager = this.parentFragmentManager
+        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+        val fragment = LoginFragment()
+        fragmentTransaction.replace(
+            R.id.nav_host_fragment_activity_main,
+            fragment
+        )
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, errorString, Toast.LENGTH_LONG).show()
 

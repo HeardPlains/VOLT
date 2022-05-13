@@ -52,6 +52,11 @@ class LoginFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
+    fun newInstance(): LoginFragment {
+        return LoginFragment()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
@@ -118,7 +123,6 @@ class LoginFragment : Fragment() {
         }
 
         loginButton.setOnClickListener {
-            Log.i("TK Error Check", "Press")
             loadingProgressBar.visibility = View.VISIBLE
             loginViewModel.login(
                 foremanIDEditText.text.toString()

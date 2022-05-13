@@ -20,25 +20,37 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
-        val result = loginRepository.login(username, password)
 
-        if (result is Result.Success) {
-            _loginResult.value =
-                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-        } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
+        when (val result = loginRepository.login(username, password)) {
+            is Result.Success -> {
+                _loginResult.value =
+                    LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+            }
+            is Result.ConnectionError -> {
+                _loginResult.value = LoginResult(connection = R.string.connection_error)
+            }
+            else -> {
+                _loginResult.value = LoginResult(error = R.string.login_failed)
+            }
         }
     }
     fun login(foremanID: String) {
         // can be launched in a separate asynchronous job
-        val result = loginRepository.login(foremanID)
 
-        if (result is Result.Success) {
-            _loginResult.value =
-                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-        } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
+
+        when (val result = loginRepository.login(foremanID)) {
+            is Result.Success -> {
+                _loginResult.value =
+                    LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+            }
+            is Result.ConnectionError -> {
+                _loginResult.value = LoginResult(error = R.string.no_connection)
+            }
+            else -> {
+                _loginResult.value = LoginResult(error = R.string.login_failed)
+            }
         }
+
     }
 
 //    fun loginDataChanged(username: String, password: String) {

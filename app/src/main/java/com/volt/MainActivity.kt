@@ -11,15 +11,21 @@ import android.nfc.*
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.ActionMode
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.volt.databinding.ActivityMainBinding
+import com.volt.ui.login.LoginFragment
+import com.volt.ui.pages.AuthenticationFragment
 import com.volt.voltdata.apidata.ApiHandler
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.appdata.AppHandler
@@ -29,8 +35,9 @@ import java.util.*
 
 //const val BASE_URL = "http://10.0.0.119:80/"
 //const val BASE_URL = "http://73.243.134.128:80/"
-const val BASE_URL = "http://67.176.4.127:80/"
-
+//const val BASE_URL = "http://67.176.4.127:80/"
+const val BASE_URL = "http://34.133.2.98:80/"
+//
 
 @ExperimentalSerializationApi
 class MainActivity : AppCompatActivity() {
@@ -71,6 +78,9 @@ class MainActivity : AppCompatActivity() {
         AppHandler.pageUpdate(this)
         if (AppHandler.connection) {
             CacheHandler.refreshCacheData(this)
+            Log.i("TK","Connection On")
+        }else{
+            Log.i("TK","Connection Off")
         }
         if (!AppHandler.admin) binding.navView.visibility = View.GONE
     }
@@ -86,20 +96,37 @@ class MainActivity : AppCompatActivity() {
 
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkRequest = builder.build()
         connectivityManager.registerDefaultNetworkCallback(object :
             ConnectivityManager.NetworkCallback() {
+
+
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 Log.i("TK Network", "Default -> Network Available")
                 for (sheet in CacheHandler.getFinalSheetCacheList(this@MainActivity)) {
                     Log.i("TK Network Print", sheet.toString())
                 }
+                AppHandler.connection = true
+                Toast.makeText(baseContext, "Internet Connection Reestablished", Toast.LENGTH_LONG)
             }
 
             override fun onLost(network: Network) {
                 super.onLost(network)
                 Log.i("TK Network", "Default -> Connection lost")
+                Toast.makeText(applicationContext,"Network Connection Lost",Toast.LENGTH_LONG)
+                Log.i("TK","Connection Off")
+                AppHandler.admin = false
+                AppHandler.connection = false
+                val fragmentManager = supportFragmentManager
+                val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+                val fragment = LoginFragment().newInstance()
+                fragmentTransaction.replace(
+                    R.id.nav_host_fragment_activity_main,
+                    fragment
+                )
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.commit()
+                hideNavBar()
             }
         })
 
@@ -143,10 +170,36 @@ class MainActivity : AppCompatActivity() {
         nfcAdapter = nfcManager.defaultAdapter
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onResume() {
         super.onResume()
-        enableNfcForegroundDispatch()
+        if (AppHandler.connection) {
+            Log.i("TK","Connection On")
+        }else{
+            Toast.makeText(this,"No Internet Connection",Toast.LENGTH_LONG)
+            Log.i("TK","Connection Off")
+            AppHandler.admin = false
+            AppHandler.connection = false
+            val fragmentManager = supportFragmentManager
+            val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+            val fragment = LoginFragment().newInstance()
+            fragmentTransaction.replace(
+                R.id.nav_host_fragment_activity_main,
+                fragment
+            )
+            fragmentTransaction.addToBackStack(null)
+            fragmentTransaction.commit()
+
+            hideNavBar()
+
+        }
     }
+
+
+
+
+
+
 
     private fun enableNfcForegroundDispatch() {
         try {
@@ -487,8 +540,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showNavBar() {
-        binding.navView.visibility = View.VISIBLE
+        // Only runs if there is a view that is currently focused
+        this.currentFocus?.let { view ->
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
+
+        runOnUiThread {
+            binding.navView.visibility = View.VISIBLE
+        }
     }
 
+    fun hideNavBar() {
+        runOnUiThread {
+            binding.navView.visibility = View.GONE
+        }
+    }
 
 }

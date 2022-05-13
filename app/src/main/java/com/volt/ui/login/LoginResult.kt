@@ -5,5 +5,6 @@ package com.volt.ui.login
  */
 data class LoginResult(
     val success: LoggedInUserView? = null,
-    val error: Int? = null
+    val error: Int? = null,
+    val connection: Int? = null
 )

@@ -1,6 +1,10 @@
 package com.volt.voltdata.data
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import com.volt.MainActivity
 import com.volt.voltdata.CacheHandler
 import com.volt.voltdata.apidata.ApiHandler
@@ -25,6 +29,9 @@ class LoginDataSource {
 
     fun login(foremanID: String): Result<LoggedInUser> {
 
+        if (!AppHandler.connection){
+            return Result.ConnectionError(IOException("No Internet Connection"))
+        }
         try {
             for (emp in AppHandler.employeeData) {
                 Log.i("TK ID Checking", "${emp.emp_id} ,${foremanID}")
